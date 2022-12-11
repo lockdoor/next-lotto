@@ -1,5 +1,5 @@
 import React from 'react'
-import Layout from '../../../components/admin/dashboard/layout'
+import Layout from '../../../components/admin/layoutAdmin'
 
 export default function UsersPage() {
   return (
