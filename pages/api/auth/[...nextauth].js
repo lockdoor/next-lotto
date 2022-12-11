@@ -11,7 +11,7 @@ export const authOptions = {
       name: "Credentials",
       async authorize(credentials, req) {
         const { username, password } = credentials;
-        if (validateUser({ username, password })) {
+        if (validateUser([ username, password ])) {
           await connectDB();
           const user = await User.findOne({ username: username });
           if (user) {

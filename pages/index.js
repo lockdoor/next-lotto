@@ -23,7 +23,7 @@ export default function Signin() {
       setErrorMessage(null);
       switch (session.token.role) {
         case "admin":
-          router.replace("/admin/");
+          router.replace("/admin/dashboard/");
           break;
         case "subadmin":
           router.replace("/subadmin/");
