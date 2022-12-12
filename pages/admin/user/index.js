@@ -1,9 +1,9 @@
 import React from 'react'
 import Layout from '../../../components/admin/layoutAdmin'
 import { AiOutlineUserAdd } from "react-icons/ai";
-import FormCreateUser from "../../../components/admin/users/formCreateUser";
-import FormEditUser from "../../../components/admin/users/formEditUser";
-import UsersTable from "../../../components/admin/users/usersTable";
+import FormCreateUser from "../../../components/admin/user/formCreateUser";
+import FormEditUser from "../../../components/admin/user/formEditUser";
+import UsersTable from "../../../components/admin/user/usersTable";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFormCreateUser } from '../../../redux/userSlice'
 
