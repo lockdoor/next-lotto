@@ -1,24 +1,5 @@
-import React, { useRef, useEffect } from "react";
-
-function useOutsideAlerter(ref, setShow) {
-  useEffect(() => {
-    /**
-     * Alert if clicked on outside of element
-     */
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        // alert("You clicked outside of me!");
-        setShow(false);
-      }
-    }
-    // Bind the event listener
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
-}
+import React, { useRef } from "react";
+import {useOutsideAlerter} from '../lib/helper'
 
 export default function MyModal({ isOpen, setShowModal, children }) {
   const wrapperRef = useRef(null);

@@ -55,9 +55,9 @@ export default function Layout({ title, children, actionIcon }) {
             <p onMouseDown={() => gotoPage("/admin/forbidden")}>เลขอั้น</p>
           </div> */}
 
-          {/* <div className="drawer-item-link">
+          <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/report")}>รายงาน</p>
-          </div> */}
+          </div>
 
           {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/keepAndSend")}>
