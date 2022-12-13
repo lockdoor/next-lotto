@@ -40,7 +40,7 @@ export default function UsersTable() {
   if (isLoading) return <div>Users is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
@@ -106,7 +106,7 @@ function Card({ nickname, discount, role, username, total, _id, lottoDateId }) {
           ยอดรวม:{" "}
           {total != 0 ? (
             <Link
-              href={`../admin/users/betDetail/${lottoDateId}/${_id}/${nickname}`}
+              href={`../admin/user/betDetail/${lottoDateId}/${_id}/${nickname}`}
               prefetch={false}
             >
               <span className="text-green-600">{total}</span>

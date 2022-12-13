@@ -1,13 +1,11 @@
 import connectDB from "../connectDB";
 import Forbidden from "../../model/forbidden";
 import Bet from '../../model/bet'
-import { getToken } from "next-auth/jwt";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function postForbidden(req, res){
-  // console.log('postForbidden work, ', req.body)
-  const token = await getToken({ req });
-  if (token.role === "admin") {
+  console.log('postForbidden work, ', req.body)
+  
     try {
       await connectDB();
       // const {type, numberString, date} = req.body
@@ -19,16 +17,12 @@ export async function postForbidden(req, res){
       console.log("error by catch controller deleteLotto", error);
       responseError(res, 400, "error by catch controller deleteLotto");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
 }
 
 export async function getForbiddensByLottoDateId(req, res){
-  // console.log('getForBiddensByLottoDateId work, ', req.query)
+  console.log('getForBiddensByLottoDateId work, ', req.query)
   const {lottoDateId} = req.query
-  const token = await getToken({ req });
-  if (token.role === "admin") {
+  
     try {
       await connectDB();
       const result = await Forbidden.find({date: lottoDateId})
@@ -40,16 +34,12 @@ export async function getForbiddensByLottoDateId(req, res){
       console.log("error by catch controller deleteLotto", error);
       responseError(res, 400, "error by catch controller deleteLotto");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
+  
 }
 
 export async function getBetByForbiddenNumber(req, res){
   const {forbiddenId} = req.query
-  const token = await getToken({ req });
-  if (token.role === "admin") {
-    // console.log(forbiddenId)
+  
     try {
       await connectDB();
       let filter = []
@@ -92,7 +82,4 @@ export async function getBetByForbiddenNumber(req, res){
       console.log("error by catch controller getBetByForbiddenNumber", error);
       responseError(res, 400, "error by catch controller getBetByForbiddenNumber");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
 }

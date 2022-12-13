@@ -17,14 +17,15 @@ export default function Forbidden() {
 
   if (isLoading) return <div>ForBidden is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
-
+  if (!data?.length) return <div>Something Wrong</div>
+  
   return (
     <Layout title={'เลขอั้น'}>
       {/* form */}
       <FormCreateForbiddenNumber />
 
       {/* table */}
-      <ForbiddenTable data={data}/>
+      <ForbiddenTable forbidden={data}/>
 
       {/* bet table */}
       <ForbiddenBetTable forbidden={data}/>

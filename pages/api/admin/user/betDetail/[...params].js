@@ -1,11 +1,10 @@
-import { getUserById } from "../../../../../database/controller/user";
+import { getUserBetDetail } from "../../../../../database/controller/user";
 
 export default function handler(req, res) {
   switch (req.method) {
     case "GET":
-      getUserById(req, res);
+      getUserBetDetail(req, res);
       break;
-    
     default:
       res.setHeader("Allow", ["GET"]);
       // res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])

@@ -2,9 +2,6 @@ import { getUsersWithTotalBetByLottoDateId } from "../../../../database/controll
 
 export default function handler(req, res) {
   switch (req.method) {
-    // case 'POST' :
-    //   postUser(req, res)
-    //   break
     case "GET":
       getUsersWithTotalBetByLottoDateId(req, res);
       break;

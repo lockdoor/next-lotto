@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { getToken } from "next-auth/jwt";
 
 //user
-function postUserWithLoginAccout(req, res) {}
+// function postUserWithLoginAccout(req, res) {}
 async function postUserWithOutLoginAccount(req, res) {
   const { nickname, discount } = req.body;
   if (nickname.trim() !== "") {
@@ -39,7 +39,7 @@ async function postUserWithOutLoginAccount(req, res) {
     responseError(res, 400, "create user with out account you sent wrong data");
   }
 }
-function postUserWithAdmin(req, res) {}
+// function postUserWithAdmin(req, res) {}
 export async function postUser(req, res) {
   const { username, password, nickname, discount, credit } = req.body;
   //สร้างผู้ใช้แบบเข้าระบบไม่ได้
@@ -49,7 +49,7 @@ export async function postUser(req, res) {
   console.log(req.body);
 
   //สร้่างผู้ใช้แบบเข้าระบบได้
-  if (validateUser({ username, password, nickname })) {
+  if (validateUser([ username, password, nickname ])) {
     const passwordHass = await bcrypt.hash(password, 8);
     const newuser = new User({
       username,
@@ -169,8 +169,8 @@ export async function getUserBetDetail(req, res) {
 }
 
 export async function getUsers(req, res) {
-  const token = await getToken({ req });
-  if (token?.role === "admin") {
+  // const token = await getToken({ req });
+  // if (token?.role === "admin") {
     try {
       await connectDB();
       const users = await User.find().select("-password");
@@ -180,9 +180,9 @@ export async function getUsers(req, res) {
       console.log("error by catch controller getCustomer");
       responseError(res, 400, "error by catch controller getCustomer");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
+  // } else {
+  //   responseError(res, 403, "protect api by token");
+  // }
 }
 
 export async function getUserById(req, res) {

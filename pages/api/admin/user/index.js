@@ -2,6 +2,7 @@ import { postUser, getUsers, putUser } from "../../../../database/controller/use
 
 
 export default function handler(req, res){
+
   switch(req.method){
     case 'POST' : 
       postUser(req, res)

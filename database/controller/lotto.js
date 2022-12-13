@@ -2,15 +2,10 @@ import connectDB from "../connectDB";
 import Lotto from "../../model/lotto";
 import Bet from "../../model/bet";
 import Forbidden from "../../model/forbidden";
-import { getToken } from "next-auth/jwt";
 import { responseError, responseSuccess } from "../../lib/responseJson";
-
 
 export async function postLotto(req, res){
   console.log('form database controller postLotto ', req.body)
-  // responseSuccess(res, 200, req.body)
-  const token = await getToken({req})
-  if(token.role === "admin"){
     try{
       await connectDB()
       const date = new Date(req.body.date)
@@ -27,15 +22,9 @@ export async function postLotto(req, res){
       responseError(res, 400, "error by catch");
       }  
     }    
-  }else{
-    responseError(res, 403, "protect api by token");
-  }
 }
 
 export async function getLottos(req, res){
-  // console.log('controller get lotto work')
-  const token = await getToken({req})
-  if(token){
     try{
       await connectDB()
       const result = await Lotto.find().select('date').sort({date: -1})
@@ -46,15 +35,9 @@ export async function getLottos(req, res){
       console.log("error by catch controller getLottos", error);
       responseError(res, 400, "error by catch controller getLottos");
     }
-  }
-  else{
-    responseError(res, 403, "protect api by token");
-  }
 }
 
 export async function putLotto(req, res){
-  const token = await getToken({ req });
-  if (token.role === "admin") {
     try {
       const {_id, date} = req.body
       console.log('from putLotto ',{_id, date} )
@@ -65,15 +48,10 @@ export async function putLotto(req, res){
       console.log("error by catch controller putLotto", error);
       responseError(res, 400, "error by catch controller putLotto");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
 }
 
 export async function deleteLotto(req, res){
   console.log('database controller deleteLotto worked')
-  const token = await getToken({ req });
-  if (token.role === "admin") {
     try {
       console.log(req.query)
       const {lottoDateId} = req.query
@@ -86,9 +64,6 @@ export async function deleteLotto(req, res){
       console.log("error by catch controller deleteLotto", error);
       responseError(res, 400, "error by catch controller deleteLotto");
     }
-  } else {
-    responseError(res, 403, "protect api by token");
-  }
 }
 
 // export async function getLottoById(req, res){

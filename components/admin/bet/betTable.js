@@ -1,38 +1,46 @@
 import { useQuery } from "react-query";
 import { getBetsLasted20 } from "../../../lib/clientRequest/bet";
+import { getForbiddenByLottoDateId } from "../../../lib/clientRequest/forbidden"
 import {
   translateType,
   formatDateWithTime,
   formatDate,
-  // getForbidden,
-  // isForbidden,
-  // textColorByForbiddenType,
+  isForbidden,
+  textColorByForbiddenType,
+  getLottoCurrent
 } from "../../../lib/helper";
 import { RiDeleteBin2Line, RiEdit2Line } from "react-icons/ri";
-// import MyModal from "../../myModal";
-// import ContentModalEdit from "./contentModalEdit";
+import MyModal from "../../myModal";
+import ContentModalEdit from "./contentModalEdit";
 import Link from "next/link";
 import React, { useState } from "react";
 
 export default function BetTable() {
-  // const forbidden = getForbidden();
   // console.log(forbidden)
+
+  const lottoCurrent = getLottoCurrent()
   const { isLoading, isError, data, error } = useQuery(
     "getBetsLasted20",
     getBetsLasted20
+  );
+  
+  const forbidden = useQuery(
+    ["getForbiddenByLottoDateId", lottoCurrent._id],
+    getForbiddenByLottoDateId
   );
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [selectBet, setSelectBet] = useState({});
 
   if (isLoading) return <div>Bets is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
+  if (!forbidden.data?.length || !data?.length) return <div>Someting Wrong!</div>
 
   const onClickEditHandler = (e) => {
     setSelectBet(e);
     setShowModalEdit(true);
   };
 
-  // console.log(data)
+  // console.log(forbidden.data)
   return (
     <div className="flex-1 flex flex-col gap-2 border border-pink-300 py-5 mt-3 rounded-md">
       <p className="text-center text-3xl font-extrabold">ล่าสุด</p>
@@ -52,9 +60,9 @@ export default function BetTable() {
                   </Link>
                 </div>
                 <div
-                  // className={`flex-1 text-center border-r-2 border-green-300 text-${textColorByForbiddenType(
-                  //   isForbidden(e.numberString, forbidden)
-                  // )}`}
+                  className={`flex-1 text-center border-r-2 border-green-300 text-${textColorByForbiddenType(
+                    isForbidden(e.numberString, forbidden.data)
+                  )}`}
                 >
                   {e.numberString}
                 </div>
@@ -77,6 +85,7 @@ export default function BetTable() {
                   <RiEdit2Line
                     size={30}
                     color="brown"
+                    className=" cursor-pointer"
                     onClick={() => onClickEditHandler(e)}
                   />
                 </div>
@@ -85,9 +94,9 @@ export default function BetTable() {
           ))}
         </>
       )}
-      {/* <MyModal isOpen={showModalEdit} onClose={setShowModalEdit}>
+      <MyModal isOpen={showModalEdit} setShowModal={setShowModalEdit}>
         <ContentModalEdit bet={selectBet} setShowModal={setShowModalEdit} />
-      </MyModal> */}
+      </MyModal>
     </div>
   );
 }

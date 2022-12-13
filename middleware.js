@@ -6,15 +6,23 @@ export default withAuth({
       const path = req.nextUrl.pathname
       if(path.startsWith("/admin")) {
         return token?.role === "admin"
-      }  else if (path.startsWith('/subadmin')){
+      } 
+      else if (path.startsWith('/subadmin')){
         return token?.role === "subadmin"
-      } else if (path.startsWith('/user')){
+      } 
+      else if (path.startsWith('/user')){
         return token?.role === "customer"
-      } else {
+      } 
+      else {
         return false
       }
     }
   }
 })
 
-export const config = { matcher: ["/admin/:path*", "/user/:path*"] }
+export const config = { 
+  matcher: [
+    "/admin/:path*", 
+    "/user/:path*", 
+  ] 
+}
