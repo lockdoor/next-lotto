@@ -64,9 +64,9 @@ export default function Layout({ title, children, actionIcon }) {
             </p>
           </div>
 
-          {/* <div className="drawer-item-link">
+          <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/win")}>ตรวจหวย</p>
-          </div> */}
+          </div>
 
           <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/lotto")}>งวดหวยทั้งหมด</p>
