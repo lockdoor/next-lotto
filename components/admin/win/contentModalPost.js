@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { getLottoDateId } from "../../../lib/helper";
+import { getLottoCurrent } from "../../../lib/helper";
 import { useQueryClient, useMutation } from "react-query";
 import { postWin, getWinByLottoDateId } from "../../../lib/clientRequest/win";
 import { checkNumberInput } from "../../../lib/helper";
 
 export default function ContentModalPost({ onClose }) {
-  const lottoDateId = getLottoDateId();
+  const lottoCurrent = getLottoCurrent();
   const [first, setFirst] = useState("");
   const [last2, setLast2] = useState("");
   const [first3_1, setFirst3_1] = useState("");
@@ -17,7 +17,7 @@ export default function ContentModalPost({ onClose }) {
   const postMutation = useMutation(postWin, {
     onSuccess: () => {
       queryClient.prefetchQuery(
-        ["getWinByLottoDateId", lottoDateId],
+        ["getWinByLottoDateId", lottoCurrent._id],
         getWinByLottoDateId
       );
       onClose(false);
