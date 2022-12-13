@@ -6,7 +6,6 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { getLottoCurrent, formatDate } from "../../lib/helper";
 export default function Layout({ title, children, actionIcon }) {
-  // const lottoCurrent = getLottoCurrent();
   const [drawerState, setDrawerState] = useState(false);
   const router = useRouter();
   const gotoPage = (page) => {
@@ -59,11 +58,11 @@ export default function Layout({ title, children, actionIcon }) {
             <p onMouseDown={() => gotoPage("/admin/report")}>รายงาน</p>
           </div>
 
-          {/* <div className="drawer-item-link">
+          <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/keepAndSend")}>
               ตัดเก็บ / ตัดส่ง
             </p>
-          </div> */}
+          </div>
 
           {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/win")}>ตรวจหวย</p>
