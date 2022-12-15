@@ -20,7 +20,7 @@ const Card = ({ forbidden, type }) => {
     <div
       className={`text-${textColorByForbiddenType(
         type
-      )} border border-pink-300 my-3 mx-5 rounded-md py-3 px-5 text-center flex-1
+      )} border border-pink-300 bg-white my-3 mx-5 rounded-md py-3 px-5 text-center flex-1
       `}
     >
       <div>{translateForbiddenType(type)}</div>

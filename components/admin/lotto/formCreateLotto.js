@@ -1,12 +1,8 @@
 import React, {useState} from 'react'
 import { postLotto, getLottos } from '../../../lib/clientRequest/lotto'
 import { useQueryClient, useMutation } from "react-query";
-// import { useDispatch } from 'react-redux';
-// import { closeFormCreateLotto } from '../../../redux/lottoSlice';
-
 
 export default function FormCreateLotto({setFormCreateLottoState}) {
-  // const dispatch = useDispatch()
   const [date, setDate] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const queryClient = useQueryClient();

@@ -4,14 +4,34 @@ import ContentPutOrDeleteKeepAll from "./contentPutOrDeleteKeepAll";
 import ContentPostKeepAll from "./contentPostKeepAll";
 import { AiOutlinePlusSquare } from "react-icons/ai";
 import { RiDeleteBin2Line, RiEdit2Line } from "react-icons/ri";
+import { getLottoCurrent } from "../../../lib/helper";
 
 export default function KeepAll({ data }) {
+  const lottoCurrent = getLottoCurrent()
   const [showPostModal, setShowPostModal] = useState(false);
   const [showPutOrDeleteKeepAll, setShowPutOrDeleteKeepAll] = useState(false);
   const keepMaxPrice = data.reduce(
     (previous, current) => (previous < current.send ? previous : current.send),
     Number.POSITIVE_INFINITY
   );
+
+  const onPostKeepAll = () => {
+    if(!lottoCurrent.isOpen){
+      alert('หวยงวดนี้ทำการปิดแล้ว')
+    }
+    else {
+      setShowPostModal(true)
+    }
+  }
+
+  const onEditKeepAll = () => {
+    if(!lottoCurrent.isOpen){
+      alert('หวยงวดนี้ทำการปิดแล้ว')
+    }
+    else {
+      setShowPutOrDeleteKeepAll(true)
+    }
+  }
 
   // console.log('keepMaxPrice is ', keepMaxPrice)
   return (
@@ -20,7 +40,7 @@ export default function KeepAll({ data }) {
         <span>ตัดทุกตัว </span>
         {data[0].keepAll?.price ? (
           <span
-            onClick={() => setShowPutOrDeleteKeepAll(true)}
+            onClick={onEditKeepAll}
             className=" cursor-pointer"
           >
             {data[0].keepAll?.price} = {data[0].keepAll?.price * data.length}
@@ -28,7 +48,7 @@ export default function KeepAll({ data }) {
           </span>
         ) : (
           <AiOutlinePlusSquare
-            onClick={() => setShowPostModal(true)}
+            onClick={onPostKeepAll}
             className="inline text-green-400 cursor-pointer"
           />
         )}

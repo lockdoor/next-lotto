@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 import { formatDate, dateToInputValue } from '../../../lib/helper'
 import { useQueryClient, useMutation } from 'react-query'
-import { putLotto, getLottos } from '../../../lib/clientRequest/lotto'
+import { putLottoDate, getLottos } from '../../../lib/clientRequest/lotto'
 
 export default function ContentModalLottoEdit({data, setShowModal}) {
 
   const [newDate, setNewDate] = useState(dateToInputValue(data.date))
   const queryClient = useQueryClient();
-  const editMutation = useMutation(putLotto, {
+  const editMutation = useMutation(putLottoDate, {
     onSuccess: (response) => {
       if (response.data?.hasError) {
         console.log(response.data?.hasError)

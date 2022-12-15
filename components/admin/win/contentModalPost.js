@@ -27,7 +27,7 @@ export default function ContentModalPost({ onClose }) {
   const onSubmitHandler = (e) => {
     e.preventDefault();
     const payload = {
-      date: lottoDateId,
+      date: lottoCurrent._id,
       first, first3_1, first3_2, last3_1, last3_2, last2
     }
     // console.log(payload);
@@ -89,7 +89,7 @@ export default function ContentModalPost({ onClose }) {
   );
 }
 
-const Input = ({ length, focus = false, value, setValue }) => {
+export const Input = ({ length, focus = false, value, setValue }) => {
   return (
     <input
       type={"text"}

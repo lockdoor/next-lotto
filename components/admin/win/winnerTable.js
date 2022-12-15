@@ -50,7 +50,7 @@ export default function WinnerTable({ type, win }) {
   if (isLoading) return <div>WinnerTable is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
 
-  console.log(data);
+  // console.log(data);
   return (
     <div className="w-60 mx-auto p-5">
       <div className="text-center">{translateType(type)}</div>

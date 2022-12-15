@@ -71,7 +71,6 @@ export default function Table({ type }) {
       <table className="mx-auto w-full max-w-lg border-2 border-pink-300">
         <caption className="text-2xl">
           <div>{translateType(type)}</div>
-          {/* <div>จำนวนเลขทั้งหมด {data.length}</div> */}
           {/* onClick open modal to add number save to keepAll model */}
           <KeepAll data={data} />
         </caption>

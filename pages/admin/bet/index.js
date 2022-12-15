@@ -1,22 +1,20 @@
-import React, {useState, useRef} from 'react'
-import Layout from '../../../components/admin/layoutAdmin'
-import Autocomplete from '../../../components/admin/bet/autocomplete'
-import Advice from '../../../components/admin/bet/advice'
-import BetTable from '../../../components/admin/bet/betTable'
-import RadioNumberLength from '../../../components/admin/bet/radioNumberLength'
-import InputNumber from '../../../components/admin/bet/inputNumber'
-import { getLottoCurrent, checkNumberInput } from '../../../lib/helper'
+import React, { useState, useRef } from "react";
+import Layout from "../../../components/admin/layoutAdmin";
+import Autocomplete from "../../../components/admin/bet/autocomplete";
+import Advice from "../../../components/admin/bet/advice";
+import BetTable from "../../../components/admin/bet/betTable";
+import RadioNumberLength from "../../../components/admin/bet/radioNumberLength";
+import InputNumber from "../../../components/admin/bet/inputNumber";
+import { getLottoCurrent, checkNumberInput } from "../../../lib/helper";
 import { useSession } from "next-auth/react";
-import betSubmit from '../../../lib/bet/betSubmit'
-import { getBetsLasted20, postBet } from '../../../lib/clientRequest/bet'
+import betSubmit from "../../../lib/bet/betSubmit";
+import { getBetsLasted20, postBet } from "../../../lib/clientRequest/bet";
 import { useQueryClient, useMutation } from "react-query";
 
-
 export default function Bet() {
+  const { data: session } = useSession();
 
-  const { data: session } = useSession()
-
-  const lottoCurrent = getLottoCurrent()
+  const lottoCurrent = getLottoCurrent();
 
   const [numberLength, setNumberLength] = useState(2);
   const [numberString, setNumberString] = useState("");
@@ -26,7 +24,7 @@ export default function Bet() {
   const [user, setUser] = useState("");
   const [userId, setUserId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const focusInput = useRef(null)
+  const focusInput = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -40,7 +38,7 @@ export default function Bet() {
         setUpPrice("");
         setDownPrice("");
         setSubsetPrice("");
-        focusInput.current.focus()
+        focusInput.current.focus();
         queryClient.prefetchQuery("getBetsLasted20", getBetsLasted20);
       }
     },
@@ -56,27 +54,33 @@ export default function Bet() {
 
   const onSubmitHandle = (e) => {
     e.preventDefault();
-    const recorder = session.token._id
-    const lottoDateId = lottoCurrent._id
-    const numbers = betSubmit(userId,
+    const recorder = session.token._id;
+    const lottoDateId = lottoCurrent._id;
+    const numbers = betSubmit(
+      userId,
       numberLength,
       lottoDateId,
       recorder,
       numberString,
-      upPrice, downPrice, subsetPrice)
+      upPrice,
+      downPrice,
+      subsetPrice
+    );
     if (numbers.length === 0) {
       setErrorMessage("กรุณากรอกข้อมูลให้ถูกต้อง");
       return;
     }
-    console.log(numbers)
-    postMutation.mutate(numbers)
-  }
+    console.log(numbers);
+    postMutation.mutate(numbers);
+  };
 
   return (
-    <Layout title={'คีย์หวย'}>
-      <main className="px-2">
+    <Layout title={"คีย์หวย"}>
+      {lottoCurrent.isOpen ? (
+        <main className="px-2">
           <div className="flex flex-col  xl:flex-row justify-around">
             {/* form */}
+
             <form onSubmit={onSubmitHandle} className="flex-1">
               {errorMessage && (
                 <p className="text-center text-red-500">{errorMessage}</p>
@@ -93,7 +97,7 @@ export default function Bet() {
               </div>
 
               {/* input number */}
-              <InputNumber 
+              <InputNumber
                 numberLength={numberLength}
                 numberString={numberString}
                 setNumberString={setNumberString}
@@ -106,7 +110,7 @@ export default function Bet() {
                 checkNumberInput={checkNumberInput}
                 focusInput={focusInput}
               />
-              
+
               <button
                 type="Submit"
                 className="block mx-auto my-3 text-xl border bg-pink-300 px-16 py-2 rounded-md hover:bg-pink-400"
@@ -116,13 +120,14 @@ export default function Bet() {
 
               <Advice />
             </form>
-            
-            
+
             {/* table */}
             <BetTable />
-          
           </div>
         </main>
+      ) : (
+        <div className="text-center">หวยงวดนี้ทำการปิดแล้ว</div>
+      )}
     </Layout>
-  )
+  );
 }

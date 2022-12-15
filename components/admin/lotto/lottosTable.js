@@ -15,12 +15,19 @@ export default function LottoTable() {
   if (isError) return <div>Got Error {error}</div>;
 
   return (
-    <div className=" grid md:grid-cols-2 xl:grid-cols-3 gap-2 mt-5 px-5">
-      {data?.length &&
-        data.map(e => {
-          return <Card data={e} key={e._id} />;
-        })}
-    </div>
+    <>
+      {
+        data?.length 
+          ? <div className=" grid md:grid-cols-2 xl:grid-cols-3 gap-2 mt-5 px-5">
+              {
+                data.map(e => {
+                  return <Card data={e} key={e._id} />;
+                })
+              }
+            </div>
+          : <div className="text-center">กรุณาสร้างงวดหวย</div>
+      }
+    </>
   );
 }
 
@@ -28,7 +35,6 @@ function Card({ data }) {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false)
   const router = useRouter()
-
   
   const editHandler = () => {
     setShowModalEdit(true);
@@ -44,7 +50,7 @@ function Card({ data }) {
   }
 
   return (
-    <div className=" border-2 border-pink-300 p-10 rounded-md">
+    <div className={` border-2 ${data.isOpen ? "border-pink-300 bg-white" : "border-gray-200 bg-gray-200 text-gray-300"}  p-10 rounded-md`}>
       <div className="flex items-center justify-between">
         <p 
           onClick={selectLottoDate} 
@@ -53,14 +59,14 @@ function Card({ data }) {
         </p>
         <div className="flex">
           {/* ปิดการลบหวยไว้ ก่อนลบต้องมีการตรวจสอบอีกหลายอย่าง */}
-          <MdDeleteForever
-            className="mx-2 text-3xl text-red-600"
-            onClick={deleteHandler}
-          />
-          <MdOutlineEdit
-            className="mx-2 text-3xl text-purple-600"
+        {!data.isOpen && <MdDeleteForever
+          className="mx-2 text-3xl text-red-600 cursor-pointer"
+          onClick={deleteHandler}
+        />}
+          {data.isOpen && <MdOutlineEdit
+            className="mx-2 text-3xl text-purple-600 cursor-pointer"
             onClick={editHandler}
-          />
+          />}
         </div>
       </div>
 

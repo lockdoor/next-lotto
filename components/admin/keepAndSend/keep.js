@@ -4,25 +4,43 @@ import MyModal from '../../myModal';
 import ContentPostKeep from './contentPostKeep';
 import ContentPutOrDeleteKeep from './contentPutOrDeleteKeep';
 import {RiDeleteBin2Line, RiEdit2Line} from "react-icons/ri"
-
+import { getLottoCurrent } from '../../../lib/helper';
 
 export default function Keep({number}) {
+  const lottoCurrent = getLottoCurrent()
   const [showPutOrDeleteKeep, setShowPutOrDeleteKeep] = useState(false)
   const [showPostKeep, setShowPostKeep] = useState(false)
   // console.log(number)
+  const onPostKeep = () => {
+    if(!lottoCurrent.isOpen){
+      alert('หวยงวดนี้ทำการปิดแล้ว')
+    }
+    else {
+      setShowPostKeep(true)
+    }
+  }
+
+  const onEditKeep = () => {
+    if(!lottoCurrent.isOpen){
+      alert('หวยงวดนี้ทำการปิดแล้ว')
+    }
+    else {
+      setShowPutOrDeleteKeep(true)
+    }
+  }
   return (
     <>
       <div className="text-center">
         {
           number.keep.price
-            ? <span className=' cursor-pointer' onClick={()=>setShowPutOrDeleteKeep(true)}>
+            ? <span className=' cursor-pointer' onClick={onEditKeep}>
               {number.keep.price}
               <RiEdit2Line className='inline' />
               </span>
             : <span>
             <AiOutlinePlusSquare 
               className="inline text-green-400 cursor-pointer"
-              onClick={()=>setShowPostKeep(true)}
+              onClick={onPostKeep}
               />
           </span>
           }

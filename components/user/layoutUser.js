@@ -13,16 +13,12 @@ export default function Layout({ title, children, actionIcon }) {
     setDrawerState(false);
     router.push(page);
   };
-  const onSignOut = () => {
-    localStorage.removeItem('lottoCurrent')
-    signOut()
-  }
   return (
     <div className=" container mx-auto">
       <Head>
         <title>{title}</title>
       </Head>
-      <header className="h-14 flex flex-row bg-pink-300 sticky top-0 z-10">
+      <header className="h-14 flex flex-row bg-pink-300">
         <HiMenu
           onClick={() => setDrawerState(true)}
           className=" justify-self-start cursor-pointer ml-2 text-5xl"
@@ -35,7 +31,7 @@ export default function Layout({ title, children, actionIcon }) {
 
         <div className=" justify-self-end mr-5 text-5xl cursor-pointer">{actionIcon}</div>
       </header>
-      
+
       {children}
 
       <Drawer
@@ -50,37 +46,37 @@ export default function Layout({ title, children, actionIcon }) {
             <p onMouseDown={() => gotoPage("/admin/dashboard")}>หน้าหลัก</p>
           </div>
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/user")}>ลูกค้า</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/bet")}>คีย์หวย</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/forbidden")}>เลขอั้น</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/report")}>รายงาน</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/keepAndSend")}>
               ตัดเก็บ / ตัดส่ง
             </p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/win")}>ตรวจหวย</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link">
+          {/* <div className="drawer-item-link">
             <p onMouseDown={() => gotoPage("/admin/lotto")}>งวดหวยทั้งหมด</p>
-          </div>
+          </div> */}
 
-          <div className="drawer-item-link" onClick={onSignOut}>
+          <div className="drawer-item-link" onClick={() => signOut()}>
             ออกจากระบบ
           </div>
         </div>

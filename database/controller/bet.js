@@ -1,18 +1,29 @@
 import connectDB from "../connectDB";
 import Bet from "../../model/bet";
+import Lotto from "../../model/lotto"
 import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function postBet(req, res) {
   console.log('form database controller postBet ', req.body)
   
     try {
+      const lottoDataId = req.body[0].date
+
       await connectDB();
-      const result = await Bet.insertMany(req.body);
-      // console.log(result)
-      responseSuccess(res, 201, "create bet success");
+      const lotto = await Lotto.findById(lottoDataId)
+      if(lotto.isOpen){
+        // console.log(lotto)
+        const result = await Bet.insertMany(req.body);
+        // console.log(result)
+        responseSuccess(res, 201, "create bet success");
+      }
+      else {
+        responseError(res, 400, "postBet error lotto not open");
+      }
+      
     } catch (error) {
-      console.log("error by catch", error);
-      responseError(res, 400, "error by catch");
+      console.log("postBet error by catch", error);
+      responseError(res, 400, "postBet error by catch");
     }
   
 }
@@ -22,7 +33,7 @@ export async function getBetsLasted20(req, res) {
     try {
       await connectDB();
       const result = await Bet.find()
-        // .populate({ path: "date", select: "date" }) 
+        .populate({ path: "date", select: "date" }) 
         .populate({ path: "user", select: "nickname" })
         .populate({ path: "recorder", select: "nickname" })
         .sort({ updatedAt: -1 })
@@ -37,12 +48,20 @@ export async function getBetsLasted20(req, res) {
 
 export async function deleteBet(req, res) {
   const { _id } = req.body;
-  console.log(_id);
+  console.log('deleteBet work', _id);
     try {
       await connectDB();
-      const result = await Bet.deleteOne({ _id });
-      console.log(result);
-      responseSuccess(res, 200, "delete bet success");
+      const bet = await Bet.findById(_id).populate({path: 'date'})
+      if(bet.date.isOpen){
+        // console.log(bet)
+        const result = await Bet.deleteOne({ _id });
+        // console.log(result);
+        responseSuccess(res, 200, "delete bet success");
+      }
+      else {
+        responseError(res, 400, "deleteBet error lotto not open");
+      }
+      
     } catch (error) {
       console.log("deleteBet error by catch", error);
       responseError(res, 400, "deleteBet error by catch");
@@ -51,13 +70,19 @@ export async function deleteBet(req, res) {
 
 export async function putBet(req, res){
   const { _id, numberString, price } = req.body;
-  console.log(_id);
+  console.log('putBet work ', _id);
     try {
       await connectDB();
-      const result = await Bet
-        .updateOne({_id: _id}, {numberString: numberString, price: price})
-      console.log(result);
-      responseSuccess(res, 200, "update bet success");
+      const bet = await Bet.findById(_id).populate({path: 'date'})
+      if(bet.date.isOpen){
+        const result = await Bet
+          .updateOne({_id: _id}, {numberString: numberString, price: price})
+        console.log(result);
+        responseSuccess(res, 200, "update bet success");
+      }
+      else {
+        responseError(res, 400, "putBet error  lotto not open");
+      }
     } catch (error) {
       console.log("putBet error by catch", error);
       responseError(res, 400, "putBet error by catch");

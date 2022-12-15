@@ -1,6 +1,7 @@
 import connectDB from "../connectDB";
 import Forbidden from "../../model/forbidden";
 import Bet from '../../model/bet'
+import Lotto from "../../model/lotto";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function postForbidden(req, res){
@@ -8,14 +9,21 @@ export async function postForbidden(req, res){
   
     try {
       await connectDB();
-      // const {type, numberString, date} = req.body
-      const result = await Forbidden.create(req.body)
-      console.log(result)     
-      responseSuccess(res, 201, 'create success')
+      const lotto = await Lotto.findById(req.body.date)
+      if(lotto.isOpen){
+        // const {type, numberString, date} = req.body
+        const result = await Forbidden.create(req.body)
+        console.log(result)     
+        responseSuccess(res, 201, 'postForbidden create success')
+      }
+      else {
+        responseError(res, 400, "postForbidden error lotto not open");
+      }
+      
       
     } catch (error) {
-      console.log("error by catch controller deleteLotto", error);
-      responseError(res, 400, "error by catch controller deleteLotto");
+      console.log("error by catch controller postForbidden", error);
+      responseError(res, 400, "error by catch controller postForbidden");
     }
 }
 

@@ -13,8 +13,11 @@ export default function ContentModalLottoDelete({data, setShowModal}) {
   const deleteMutation = useMutation(deleteLotto, {
     onSuccess: (response) => {
       if (response.data?.hasError) {
-        console.log(response.data?.hasError)
+        // console.log(response.data?.hasError)
+        // console.log(response.data)
+        setErrorMessage(response.data.message)
       } else {
+        setErrorMessage('')
         setShowModal(false)
         queryClient.prefetchQuery("getLottos", getLottos);
       }

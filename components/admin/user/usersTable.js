@@ -78,7 +78,7 @@ function Card({ nickname, discount, role, username, total, _id, lottoDateId }) {
   }
 
   return (
-    <div className=" border-2 border-pink-300 px-10 py-5 mx-3 rounded-md">
+    <div className=" border-2 border-pink-300 bg-white px-10 py-5 mx-3 rounded-md">
       <div className="flex flex-row justify-between">
         <p
           onClick={onClickEditHandler}

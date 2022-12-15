@@ -33,14 +33,14 @@ export default function BetTable() {
 
   if (isLoading) return <div>Bets is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
-  if (!forbidden.data?.length || !data?.length) return <div>Someting Wrong!</div>
+  if (!data?.length) return <div>Someting Wrong!</div>
 
   const onClickEditHandler = (e) => {
     setSelectBet(e);
     setShowModalEdit(true);
   };
 
-  // console.log(forbidden.data)
+  console.log(data)
   return (
     <div className="flex-1 flex flex-col gap-2 border border-pink-300 py-5 mt-3 rounded-md">
       <p className="text-center text-3xl font-extrabold">ล่าสุด</p>
@@ -49,7 +49,7 @@ export default function BetTable() {
           {data.map((e) => (
             <div
               key={e._id}
-              className=" border border-green-300 mx-5 p-4 rounded-xl"
+              className=" border border-green-300 bg-white mx-5 p-4 rounded-xl"
             >
               <div className="flex flex-row justify-around">
                 <div className=" flex-1 text-center border-r-2 border-green-300">
@@ -60,7 +60,7 @@ export default function BetTable() {
                   </Link>
                 </div>
                 <div
-                  className={`flex-1 text-center border-r-2 border-green-300 text-${textColorByForbiddenType(
+                  className={`flex-1 text-center border-r-2 border-green-300 ${textColorByForbiddenType(
                     isForbidden(e.numberString, forbidden.data)
                   )}`}
                 >
