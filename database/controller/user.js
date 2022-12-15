@@ -1,20 +1,29 @@
 import connectDB from "../connectDB";
 import User from "../../model/user";
 import Bet from "../../model/bet";
+import Discount from "../../model/discount";
 import validateUser from "../../lib/validateUser";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 import bcrypt from "bcrypt";
-import { getToken } from "next-auth/jwt";
 
 //สร้างผู้ใช้แบบเข้าระบบไม่ได้
 async function postUserWithOutLoginAccount(req, res) {
-  const { nickname, discount } = req.body;
+  const { nickname, discount, lottoDateId } = req.body;
   if (nickname.trim() !== "") {
     try {
       await connectDB();
-      const result = await User.create({
+      const user = await User.create({
         nickname,
       });
+      // console.log(user);
+      if (discount) {
+        await Discount.create({
+          date: lottoDateId,
+          user: user._id,
+          discount: discount ? discount : 0,
+        });
+      }
+        
       return responseSuccess(res, 201, "create user success");
     } catch (error) {
       console.log(error);
@@ -34,11 +43,17 @@ async function postUserWithOutLoginAccount(req, res) {
 }
 //สร้างผู้ใช้แบบเข้าระบบได้
 export async function postUser(req, res) {
-  const { username, password, nickname, discount, credit } = req.body;
+  const { username, password, nickname, discount, credit, lottoDateId } =
+    req.body;
+  let newuser = undefined
 
   //สร้างผู้ใช้แบบเข้าระบบไม่ได้
   if (!username || !password) {
     return postUserWithOutLoginAccount(req, res);
+    // if(!validateUser([nickname])){
+    //   return responseError(res, 400, "you sent wrong data");
+    // }
+    // newuser = new User({nickname})
   }
   // console.log(req.body);
 
@@ -54,7 +69,12 @@ export async function postUser(req, res) {
     try {
       await connectDB();
       const user = await newuser.save();
-      if(user) return responseSuccess(res, 201, "create user success");
+      await Discount.create({
+        date: lottoDateId,
+        user: user._id,
+        discount: discount ? discount : 0,
+      });
+      if (user) return responseSuccess(res, 201, "create user success");
     } catch (error) {
       console.log(error);
       if (error.code === 11000) {
@@ -73,56 +93,51 @@ export async function postUser(req, res) {
 }
 
 export async function getUsersWithTotalBetByLottoDateId(req, res) {
-  const token = await getToken({ req });
-  console.log(req.query);
-  const { lottoDateId } = req.query;
-  // console.log(lottoDateId)
-  if (token?.role === "admin") {
-    try {
-      await connectDB();
+  try {
+    console.log("getUsersWithTotalBetByLottoDateId worked ", req.query);
+    const { lottoDateId } = req.query;
+    // console.log(lottoDateId)
+    await connectDB();
 
-      const users = await User.aggregate([
-        {
-          $lookup: {
-            from: "bets",
-            localField: "_id",
-            foreignField: "user",
-            as: "bet",
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ["$date", { $toObjectId: lottoDateId }] },
-                },
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "bets",
+          localField: "_id",
+          foreignField: "user",
+          as: "bet",
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$date", { $toObjectId: lottoDateId }] },
               },
-            ],
-          },
+            },
+          ],
         },
-        {
-          $project: {
-            _id: 1,
-            nickname: 1,
-            username: 1,
-            discount: 1,
-            role: 1,
-            // bet: 1,
-            total: { $sum: "$bet.price" },
-          },
+      },
+      {
+        $project: {
+          _id: 1,
+          nickname: 1,
+          username: 1,
+          discount: 1,
+          role: 1,
+          // bet: 1,
+          total: { $sum: "$bet.price" },
         },
-      ]).sort({ total: -1 });
-      res.status(200).json(users);
-    } catch (error) {
-      console.log(
-        "error by catch controller getUsersWithTotalBetByLottoDateId",
-        error
-      );
-      responseError(
-        res,
-        400,
-        "error by catch controller getUsersWithTotalBetByLottoDateId"
-      );
-    }
-  } else {
-    responseError(res, 403, "protect api by token");
+      },
+    ]).sort({ total: -1 });
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(
+      "error by catch controller getUsersWithTotalBetByLottoDateId",
+      error
+    );
+    responseError(
+      res,
+      400,
+      "error by catch controller getUsersWithTotalBetByLottoDateId"
+    );
   }
 }
 
@@ -156,19 +171,14 @@ export async function getUsers(req, res) {
 
 export async function getUserById(req, res) {
   console.log("getUserById work ", req.query);
-  const token = await getToken({ req });
-  if (token?.role === "admin") {
-    try {
-      await connectDB();
-      const user = await User.findOne({ _id: req.query.userId });
-      // console.log('user is ', user)
-      res.status(200).json(user);
-    } catch (error) {
-      console.log("error by catch controller getUserById");
-      responseError(res, 400, "error by catch controller getUserById");
-    }
-  } else {
-    responseError(res, 403, "protect api by token");
+  try {
+    await connectDB();
+    const user = await User.findOne({ _id: req.query.userId });
+    // console.log('user is ', user)
+    res.status(200).json(user);
+  } catch (error) {
+    console.log("error by catch controller getUserById");
+    responseError(res, 400, "error by catch controller getUserById");
   }
 }
 

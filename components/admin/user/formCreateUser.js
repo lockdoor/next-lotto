@@ -11,7 +11,7 @@ import { getLottoCurrent } from "../../../lib/helper";
 export default function FormCreateUser() {
   const lottoCurrent = getLottoCurrent();
   const [nickname, setNickname] = useState("");
-  const [discount, setDiscount] = useState("0");
+  const [discount, setDiscount] = useState(0);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [credit, setCredit] = useState("")
@@ -42,8 +42,8 @@ export default function FormCreateUser() {
   const onSumitHandler = async (e) => {
     e.preventDefault();
     const payload = checkForCreateLoginAccount
-      ? { nickname, discount, username, password, credit }
-      : { nickname, discount };
+      ? { nickname, discount, username, password, credit, lottoDateId: lottoCurrent._id }
+      : { nickname, discount, lottoDateId: lottoCurrent._id };
     addMutation.mutate(payload);
   };
 
@@ -93,7 +93,7 @@ export default function FormCreateUser() {
             <div>
               <label htmlFor="username">เครดิต: </label>
               <input
-                type={"Number"}
+                type={"number"}
                 id="username"
                 value={credit}
                 required={checkForCreateLoginAccount}
