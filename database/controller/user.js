@@ -6,23 +6,16 @@ import { responseError, responseSuccess } from "../../lib/responseJson";
 import bcrypt from "bcrypt";
 import { getToken } from "next-auth/jwt";
 
-//user
-// function postUserWithLoginAccout(req, res) {}
+//สร้างผู้ใช้แบบเข้าระบบไม่ได้
 async function postUserWithOutLoginAccount(req, res) {
   const { nickname, discount } = req.body;
   if (nickname.trim() !== "") {
     try {
-      const token = await getToken({ req });
-      if (token?.role === "admin" || token?.role === "subadmin") {
-        await connectDB();
-        const result = await User.create({
-          nickname,
-          discount: discount ? discount : 0,
-        });
-        return responseSuccess(res, 201, "create user success");
-      } else {
-        return responseError(res, 400, "require admin token");
-      }
+      await connectDB();
+      const result = await User.create({
+        nickname,
+      });
+      return responseSuccess(res, 201, "create user success");
     } catch (error) {
       console.log(error);
       if (error.code === 11000) {
@@ -39,48 +32,29 @@ async function postUserWithOutLoginAccount(req, res) {
     responseError(res, 400, "create user with out account you sent wrong data");
   }
 }
-// function postUserWithAdmin(req, res) {}
+//สร้างผู้ใช้แบบเข้าระบบได้
 export async function postUser(req, res) {
   const { username, password, nickname, discount, credit } = req.body;
+
   //สร้างผู้ใช้แบบเข้าระบบไม่ได้
   if (!username || !password) {
     return postUserWithOutLoginAccount(req, res);
   }
-  console.log(req.body);
+  // console.log(req.body);
 
   //สร้่างผู้ใช้แบบเข้าระบบได้
-  if (validateUser([ username, password, nickname ])) {
+  if (validateUser([username, password, nickname])) {
     const passwordHass = await bcrypt.hash(password, 8);
     const newuser = new User({
       username,
       password: passwordHass,
       nickname,
-      discount: discount ? discount : 0,
-      credit
+      credit,
     });
     try {
       await connectDB();
-      const token = await getToken({ req });
-      console.log(token);
-      if (token?.role === "admin" || token?.role === "subadmin") {
-        //ทำการตรวจสอบข้อมูลก่อนบันทึก
-
-        const result = await newuser.save();
-        console.log("has token", result);
-        responseSuccess(res, 201, "create user success");
-      } else {
-        //ทำการถามก่อนว่ามี user หรือยัง ถ้ายังให้สร้าง user admin ถ้ามีแล้วให้แจ้ง error require token
-
-        const user = await User.findOne({ role: "admin" });
-        if (user) {
-          return responseError(res, 400, "require admin token");
-        } else {
-          newuser.role = "admin";
-          const result = await newuser.save();
-          console.log("not has token", result);
-          responseSuccess(res, 201, "create user success");
-        }
-      }
+      const user = await newuser.save();
+      if(user) return responseSuccess(res, 201, "create user success");
     } catch (error) {
       console.log(error);
       if (error.code === 11000) {
@@ -169,20 +143,15 @@ export async function getUserBetDetail(req, res) {
 }
 
 export async function getUsers(req, res) {
-  // const token = await getToken({ req });
-  // if (token?.role === "admin") {
-    try {
-      await connectDB();
-      const users = await User.find().select("-password");
-      // console.log(users)
-      res.status(200).json(users);
-    } catch (error) {
-      console.log("error by catch controller getCustomer");
-      responseError(res, 400, "error by catch controller getCustomer");
-    }
-  // } else {
-  //   responseError(res, 403, "protect api by token");
-  // }
+  try {
+    await connectDB();
+    const users = await User.find().select("-password");
+    // console.log(users)
+    res.status(200).json(users);
+  } catch (error) {
+    console.log("error by catch controller getCustomer");
+    responseError(res, 400, "error by catch controller getCustomer");
+  }
 }
 
 export async function getUserById(req, res) {
@@ -204,32 +173,28 @@ export async function getUserById(req, res) {
 }
 
 export async function putUser(req, res) {
-  console.log(req.body);
-  const { _id, nickname, discount, username, password, credit } = req.body;
-  const token = await getToken({ req });
-  const passwordHass = password ? await bcrypt.hash(password, 8) : null
-  
-
-    if (token?.role === "admin") {
-      try {
-        await connectDB();
-        const user = username
-          ? await User.updateOne(
-              { _id },
-              { nickname, discount, username, password: passwordHass, credit }
-            )
-          : await User.updateOne(
-              { _id },
-              { nickname, discount, $unset: { username: "", password: "", credit: "" } }
-            );
-        console.log("user is ", user);
-        res.status(200).json(user);
-      } catch (error) {
-        console.log("error by catch controller putUser");
-        responseError(res, 400, "error by catch controller putUser");
-      }
-    } else {
-      responseError(res, 403, "protect api by token");
-    }
-  
+  try {
+    console.log(req.body);
+    const { _id, nickname, discount, username, password, credit } = req.body;
+    const passwordHass = password ? await bcrypt.hash(password, 8) : null;
+    await connectDB();
+    const user = username
+      ? await User.updateOne(
+          { _id },
+          { nickname, discount, username, password: passwordHass, credit }
+        )
+      : await User.updateOne(
+          { _id },
+          {
+            nickname,
+            discount,
+            $unset: { username: "", password: "", credit: "" },
+          }
+        );
+    console.log("user is ", user);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log("error by catch controller putUser");
+    responseError(res, 400, "error by catch controller putUser");
+  }
 }

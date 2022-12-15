@@ -7,20 +7,18 @@
 import React, { useState } from "react";
 import connectDB from "../database/connectDB";
 import User from "../model/user"
-import { postUser } from "../lib/clientRequest/user";
 import { signIn } from "next-auth/react";
+import { postAdmin } from "../lib/clientRequest/user";
 
 export default function Create(props) {
-  // console.log(props)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("")
   const [errorMessage, setErrorMessage] = useState(null);
-  // const router = useRouter()
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    const response = await postUser({ username, password, nickname });
+    const response = await postAdmin({ username, password, nickname });
     if (response.data.hasError) {
       setErrorMessage(response.data.message);
     }
@@ -30,8 +28,6 @@ export default function Create(props) {
   };
 
   return (
-
-    // <>initApp</>
     <form
       onSubmit={onSubmitHandler}
       className="max-w-md mx-auto px-5 flex flex-col justify-center h-screen"
@@ -108,7 +104,6 @@ export const getServerSideProps = async () => {
   try{
     await connectDB()
     const user = await User.findOne()
-    // console.log(user)
     if(user){
       return {
         redirect: {

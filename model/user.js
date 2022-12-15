@@ -7,7 +7,7 @@ const UserSchema = new Schema(
     },
     password: { type: String, trim: true },
     nickname: { type: String, trim: true, unique: true, required: true },
-    discount: { type: Number, default: 0 },
+    // discount: { type: Number, default: 0 },
     credit: {type: Number, default: 0},
     role: {
       type: String,
