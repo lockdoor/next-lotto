@@ -6,75 +6,47 @@ import validateUser from "../../lib/validateUser";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 import bcrypt from "bcrypt";
 
-//สร้างผู้ใช้แบบเข้าระบบไม่ได้
-async function postUserWithOutLoginAccount(req, res) {
-  const { nickname, discount, lottoDateId } = req.body;
-  if (nickname.trim() !== "") {
-    try {
-      await connectDB();
-      const user = await User.create({
-        nickname,
-      });
-      // console.log(user);
-      if (discount) {
-        await Discount.create({
-          date: lottoDateId,
-          user: user._id,
-          discount: discount ? discount : 0,
-        });
-      }
-        
-      return responseSuccess(res, 201, "create user success");
-    } catch (error) {
-      console.log(error);
-      if (error.code === 11000) {
-        responseError(res, 400, "customer is exist");
-      } else {
-        responseError(
-          res,
-          500,
-          "error by catch in database controller postUser create user with out account"
-        );
-      }
-    }
-  } else {
-    responseError(res, 400, "create user with out account you sent wrong data");
-  }
-}
-//สร้างผู้ใช้แบบเข้าระบบได้
 export async function postUser(req, res) {
+  console.log('post user work ', req.body)
   const { username, password, nickname, discount, credit, lottoDateId } =
     req.body;
   let newuser = undefined
 
   //สร้างผู้ใช้แบบเข้าระบบไม่ได้
   if (!username || !password) {
-    return postUserWithOutLoginAccount(req, res);
-    // if(!validateUser([nickname])){
-    //   return responseError(res, 400, "you sent wrong data");
-    // }
-    // newuser = new User({nickname})
+    // return postUserWithOutLoginAccount(req, res);
+    if(!validateUser([nickname])){
+      return responseError(res, 400, "you sent wrong data");
+    }
+    newuser = new User({nickname})
   }
-  // console.log(req.body);
-
-  //สร้่างผู้ใช้แบบเข้าระบบได้
-  if (validateUser([username, password, nickname])) {
+  else{
+    if (!validateUser([username, password, nickname])){
+      return responseError(res, 400, "you sent wrong data");
+    }
+    //สร้่างผู้ใช้แบบเข้าระบบได้
     const passwordHass = await bcrypt.hash(password, 8);
-    const newuser = new User({
+    newuser = new User({
       username,
       password: passwordHass,
       nickname,
       credit,
     });
+  } 
+  // console.log(req.body);
     try {
       await connectDB();
       const user = await newuser.save();
-      await Discount.create({
-        date: lottoDateId,
-        user: user._id,
-        discount: discount ? discount : 0,
-      });
-      if (user) return responseSuccess(res, 201, "create user success");
+      if(user) {
+        if(discount) {
+          await Discount.create({
+            date: lottoDateId,
+            user: user._id,
+            discount: discount ? discount : 0,
+          });
+        }
+        return responseSuccess(res, 201, "create user success");
+      }
     } catch (error) {
       console.log(error);
       if (error.code === 11000) {
@@ -87,9 +59,6 @@ export async function postUser(req, res) {
         );
       }
     }
-  } else {
-    responseError(res, 400, "you sent wrong data");
-  }
 }
 
 export async function getUsersWithTotalBetByLottoDateId(req, res) {

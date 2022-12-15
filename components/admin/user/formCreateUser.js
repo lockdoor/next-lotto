@@ -52,6 +52,7 @@ export default function FormCreateUser() {
     if (!checkForCreateLoginAccount) {
       setUsername("");
       setPassword("");
+      setCredit("")
     }
   };
 
