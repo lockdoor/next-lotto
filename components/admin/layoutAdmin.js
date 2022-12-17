@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { getLottoCurrent, formatDate } from "../../lib/helper";
 import Head from "next/head";
 export default function Layout({ title, children, actionIcon }) {
+  const lottoCurrent = getLottoCurrent()
   const [drawerState, setDrawerState] = useState(false);
   const router = useRouter();
   const gotoPage = (page) => {
@@ -23,10 +24,10 @@ export default function Layout({ title, children, actionIcon }) {
         <title>{title}</title>
       </Head>
       <header className="h-14 flex flex-row bg-pink-300 sticky top-0 z-10">
-        <HiMenu
+        {lottoCurrent &&<HiMenu
           onClick={() => setDrawerState(true)}
           className=" justify-self-start cursor-pointer ml-2 text-5xl"
-        />
+        />}
 
         <div className="w-full text-center">
           <div>{title}</div>

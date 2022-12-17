@@ -1,42 +1,24 @@
 import React, { useState } from "react";
 import {
-  getUserById,
   getUsersWithTotalBetByLottoDateId,
   putUser
 } from "../../../lib/clientRequest/user";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { closeFormEditUser } from "../../../redux/userSlice";
 import { getLottoCurrent } from "../../../lib/helper";
 
-export default function FormEditUser({ userId }) {
+export default function FormEditUser({ user }) {
   // console.log(userId);
   const lottoCurrent = getLottoCurrent();
-  const [nickname, setNickname] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [username, setUsername] = useState("");
+  const [nickname, setNickname] = useState(user.nickname);
+  const [discount, setDiscount] = useState(user.discount);
+  const [username, setUsername] = useState(user.username);
   const [password, setPassword] = useState("");
-  const [credit, setCredit] = useState("")
+  const [credit, setCredit] = useState(user.credit)
   const [errorMessage, setErrorMessage] = useState(null);
   const [checkForCreateLoginAccount, setCheckForCreateLoginAccount] =
     useState(false);
-
-  const { isError, isLoading, data, error, status } = useQuery(
-    ["getUserById", userId],
-    getUserById,
-    {
-      onSuccess: (response) => {
-        // console.log(response)
-        // if(response.status !== 200) return <div>Someting Error</div>
-        // console.log(response);
-        setNickname(response.nickname);
-        setDiscount(response.discount);
-        setUsername(response.username);
-        setCredit(response.credit)
-        if(response.username) setCheckForCreateLoginAccount(true)
-      },
-    }
-  );
 
   const queryClient = useQueryClient();
   const dispatch = useDispatch()
@@ -61,8 +43,8 @@ export default function FormEditUser({ userId }) {
   const onSumitHandler = async (e) => {
     e.preventDefault();
     const payload = checkForCreateLoginAccount
-      ? { nickname, discount, username, password, _id: data._id, credit }
-      : { nickname, discount, _id:data._id };
+      ? { nickname, discount, username, password, _id: user._id, credit, lottoDateId: lottoCurrent._id }
+      : { nickname, discount, _id: user._id, lottoDateId: lottoCurrent._id };
     putMutation.mutate(payload);
   };
 
@@ -72,10 +54,6 @@ export default function FormEditUser({ userId }) {
     setPassword("")
     
   };
-
-  if (isLoading) return <div>User is Loading</div>;
-  if (isError) return <div>Got Error {error}</div>;
-  if (!status) return <div>Someting Error</div>
 
   return (
     <div className="fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-96 bg-white p-5 border-2 border-green-300 rounded-md">

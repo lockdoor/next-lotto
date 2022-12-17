@@ -11,7 +11,7 @@ export default function UsersPage() {
 
   const formCreateUserState = useSelector(state=>state.user.formCreateUserState)
   const formEditUserState = useSelector(state=>state.user.formEditUserState)
-  const userId = useSelector(state=>state.user.userId)
+  const user = useSelector(state=>state.user.user)
   const dispatch = useDispatch()
 
   const actionIcon = (
@@ -25,7 +25,7 @@ export default function UsersPage() {
       {formCreateUserState && <FormCreateUser />}
 
       {/* form edit user */}
-      {formEditUserState && <FormEditUser userId={userId} />}
+      {formEditUserState && <FormEditUser user={user} />}
 
       {/* show user list */}
       <UsersTable />

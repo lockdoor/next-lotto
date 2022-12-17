@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   formCreateUserState: false,
   formEditUserState: false,
-  userId: null,
+  user: null,
 };
 
 export const userSlice = createSlice({
@@ -25,7 +25,7 @@ export const userSlice = createSlice({
       state.formEditUserState = false;
     },
     selectUser: (state, action) => {
-      state.userId = action.payload;
+      state.user = action.payload;
     },
     // closeDrawer: (state) => {state.drawerState = false},
   },

@@ -58,7 +58,7 @@ export default function UsersTable() {
         {userData?.length ? (
           userData.map((data, index) => {
             return (
-              <Card {...data} key={index} lottoDateId={lottoCurrent._id} />
+              <Card data={data} key={index} lottoDateId={lottoCurrent._id} />
             );
           })
         ) : (
@@ -69,11 +69,12 @@ export default function UsersTable() {
   );
 }
 
-function Card({ nickname, discount, role, username, total, _id, lottoDateId }) {
+function Card({ data, lottoDateId }) {
+  const {nickname, discount, role, username, total, _id} = data
   const dispatch = useDispatch();
   const onClickEditHandler = () => {
     // console.log('edit ', _id)
-    dispatch(selectUser(_id));
+    dispatch(selectUser(data));
     dispatch(toggleFormEditUser());
   }
 
@@ -98,7 +99,7 @@ function Card({ nickname, discount, role, username, total, _id, lottoDateId }) {
           {" : " + nickname + " "}
           <RiEdit2Line className="inline" />
         </p>
-        <p>ส่วนลด: {discount}</p>
+        {/* <p>ส่วนลด: {discount}</p> */}
       </div>
 
       <div className="flex flex-row justify-between">
