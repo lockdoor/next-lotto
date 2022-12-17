@@ -94,7 +94,7 @@ function Card({ data, lottoDateId }) {
           {" : " + nickname + " "}
           <RiEdit2Line className="inline" />
         </p>
-        {/* <p>ส่วนลด: {discount}</p> */}
+        <p>ส่วนลด: {discount}</p>
       </div>
 
       <div className="flex flex-row justify-between">
