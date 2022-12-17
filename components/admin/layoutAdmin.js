@@ -7,8 +7,12 @@ import { useRouter } from "next/router";
 import { getLottoCurrent, formatDate } from "../../lib/helper";
 import Head from "next/head";
 export default function Layout({ title, children, actionIcon }) {
-  const lottoCurrent = getLottoCurrent()
+  // const lottoCurrent = getLottoCurrent()
   const [drawerState, setDrawerState] = useState(false);
+  const [lottoCurrent, setLottoCurrent] = useState(null)
+  useEffect(()=>{
+    setLottoCurrent(JSON.parse(localStorage.getItem("lottoCurrent")))
+  }, [])
   const router = useRouter();
   const gotoPage = (page) => {
     setDrawerState(false);

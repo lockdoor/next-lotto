@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Layout from "../../../components/admin/layoutAdmin";
 import Autocomplete from "../../../components/admin/bet/autocomplete";
 import Advice from "../../../components/admin/bet/advice";
 import BetTable from "../../../components/admin/bet/betTable";
 import RadioNumberLength from "../../../components/admin/bet/radioNumberLength";
 import InputNumber from "../../../components/admin/bet/inputNumber";
-import { getLottoCurrent, checkNumberInput } from "../../../lib/helper";
+import { checkNumberInput } from "../../../lib/helper";
 import { useSession } from "next-auth/react";
 import betSubmit from "../../../lib/bet/betSubmit";
 import { getBetsLasted20, postBet } from "../../../lib/clientRequest/bet";
@@ -13,9 +13,6 @@ import { useQueryClient, useMutation } from "react-query";
 
 export default function Bet() {
   const { data: session } = useSession();
-
-  const lottoCurrent = getLottoCurrent();
-
   const [numberLength, setNumberLength] = useState(2);
   const [numberString, setNumberString] = useState("");
   const [upPrice, setUpPrice] = useState("");
@@ -24,7 +21,12 @@ export default function Bet() {
   const [user, setUser] = useState("");
   const [userId, setUserId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [lottoCurrent, setLottoCurrent] = useState(null)
   const focusInput = useRef(null);
+
+  useEffect(()=>{
+    setLottoCurrent(JSON.parse(localStorage.getItem('lottoCurrent')))
+  },[])
 
   const queryClient = useQueryClient();
 
@@ -76,7 +78,7 @@ export default function Bet() {
 
   return (
     <Layout title={"คีย์หวย"}>
-      {lottoCurrent.isOpen ? (
+      {lottoCurrent?.isOpen ? (
         <main className="px-2">
           <div className="flex flex-col  xl:flex-row justify-around">
             {/* form */}

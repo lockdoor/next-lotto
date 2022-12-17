@@ -1,17 +1,20 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Layout from '../../../components/admin/layoutAdmin'
 import FormCreateForbiddenNumber from "../../../components/admin/forbidden/formCreateForbiddenNumber";
 import ForbiddenTable from "../../../components/admin/forbidden/forbiddenTable";
 import ForbiddenBetTable from "../../../components/admin/forbidden/forbiddenBetTable";
-import { getLottoCurrent } from '../../../lib/helper';
 import { useQuery } from "react-query";
 import { getForbiddenByLottoDateId } from "../../../lib/clientRequest/forbidden";
 
 export default function Forbidden() {
 
-  const lottoCurrent = getLottoCurrent();
+  const [lottoCurrent, setLottoCurrent] = useState(null)
+  useEffect(()=>{
+    setLottoCurrent(JSON.parse(localStorage.getItem('lottoCurrent')))
+  },[])
+
   const {isError, isLoading, data, error} = useQuery(
-    ["getForbiddenByLottoDateId", lottoCurrent._id],
+    ["getForbiddenByLottoDateId", lottoCurrent?._id],
     getForbiddenByLottoDateId
   );
 

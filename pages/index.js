@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
-import { getLottoCurrent } from "../lib/helper";
+// import { getLottoCurrent } from "../lib/helper";
 
 // หน้าแรกสำหรับการเข้าสู่ระบบ หากเป็นการใช้งานครั้งแรกยังไม่มี username สร้างขึ้นมาในฐานข้อมูล ให้เข้าไปที่ /create เพื่อสร้าง user คนแรกก่อน โดยการสร้างจะเป็นลูกค้าทั้งหมด ต้องเข้าไปที่ฐานข้อมูลเพื่อไปกำหนดสิทธิ์
 
 export default function Signin() {
-  const lottoCurrent = getLottoCurrent()
+  
+  const [lottoCurrent, setLottoCurrent] = useState(null)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
+
+  useEffect(()=>{
+    setLottoCurrent(JSON.parse(localStorage.getItem("lottoCurrent")))
+  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -42,6 +47,8 @@ export default function Signin() {
       setErrorMessage(result.error);
     }
   };
+
+
   return (
     <form
       onSubmit={onSubmitHandler}

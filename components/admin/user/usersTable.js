@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getUsersWithTotalBetByLottoDateId } from "../../../lib/clientRequest/user";
 import { useQuery } from "react-query";
 import { FaChessKnight, FaChessQueen, FaChessPawn } from "react-icons/fa";
 import Link from "next/link";
-import { getLottoCurrent } from "../../../lib/helper";
 import { RiEdit2Line } from "react-icons/ri";
 import { MdPersonSearch } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { toggleFormEditUser, selectUser } from "../../../redux/userSlice";
 
 
-export default function UsersTable() {
-  const lottoCurrent = getLottoCurrent();
+export default function UsersTable({lottoCurrent}) {
   const [userData, setUserData] = useState(null);
-  const [userSearch, setUserSearch] = useState("");
-
+  const [userSearch, setUserSearch] = useState(""); 
   const { isLoading, isError, data, error } = useQuery(
     ["getUsersWithTotalBetByLottoDateId", lottoCurrent._id],
     getUsersWithTotalBetByLottoDateId,
@@ -39,8 +36,6 @@ export default function UsersTable() {
 
   if (isLoading) return <div>Users is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
-
-  // console.log(data);
 
   return (
     <>

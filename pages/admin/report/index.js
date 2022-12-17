@@ -1,15 +1,17 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Layout from '../../../components/admin/layoutAdmin'
 import { useQuery } from "react-query";
 import { getAllBetsGroupNumberTotalPrice } from "../../../lib/clientRequest/report";
 import TotalPrice from "../../../components/admin/report/totalPrice";
 import Summarize from "../../../components/admin/report/summarize";
-import { getLottoCurrent } from '../../../lib/helper';
 
 export default function ReportPage() {
-  const lottoCurrent = getLottoCurrent()
+  const [lottoCurrent, setLottoCurrent] = useState(null)
+  useEffect(()=>{
+    setLottoCurrent(JSON.parse(localStorage.getItem('lottoCurrent')))
+  },[])
   const { isLoading, isError, data, error } = useQuery(
-    ["getAllBetsGroupNumberTotalPrice", lottoCurrent._id],
+    ["getAllBetsGroupNumberTotalPrice", lottoCurrent?._id],
     getAllBetsGroupNumberTotalPrice
   );
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Layout from '../../../components/admin/layoutAdmin'
 import { AiOutlineUserAdd } from "react-icons/ai";
 import FormCreateUser from "../../../components/admin/user/formCreateUser";
@@ -14,6 +14,11 @@ export default function UsersPage() {
   const user = useSelector(state=>state.user.user)
   const dispatch = useDispatch()
 
+  const [lottoCurrent, setLottoCurrent] = useState("")
+  useEffect(() => {
+    setLottoCurrent(JSON.parse(localStorage.getItem('lottoCurrent')))
+  }, [])
+
   const actionIcon = (
     <AiOutlineUserAdd onClick={() => dispatch(toggleFormCreateUser())} />
   );
@@ -28,7 +33,7 @@ export default function UsersPage() {
       {formEditUserState && <FormEditUser user={user} />}
 
       {/* show user list */}
-      <UsersTable />
+      <UsersTable lottoCurrent={lottoCurrent}/>
 
     </Layout>
     

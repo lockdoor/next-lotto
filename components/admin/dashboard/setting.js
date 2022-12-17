@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { putLottoSettings } from "../../../lib/clientRequest/dashboard";
 
 
 export default function Setting({lottoCurrent}) {
-
-  const [isOpen, setIsOpen] = useState(lottoCurrent.isOpen)
-  const [userBet, setUserBet] = useState(lottoCurrent.userBet)
+  const [isOpen, setIsOpen] = useState('')
+  const [userBet, setUserBet] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  useEffect(()=>{
+    const lottoCurrent = JSON.parse(localStorage.getItem("lottoCurrent"))
+    setIsOpen(lottoCurrent.isOpen)
+    setUserBet(lottoCurrent.userBet)
+  }, [])
 
   const onChangeSwitch = async(feature) => {
     const payload = feature === 'isOpen' 
