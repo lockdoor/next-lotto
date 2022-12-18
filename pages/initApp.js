@@ -42,7 +42,7 @@ export default function Create(props) {
       </div>
 
       {errorMessage && (
-        <p className="text-center text-red-600 capitalize underline">
+        <p className="text-error-message">
           {errorMessage}
         </p>
       )}

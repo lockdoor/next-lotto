@@ -76,7 +76,7 @@ export default function BetTable() {
                 <div></div>
 
                 <div className="text-center text-xs">
-                  <p>ผู้บันทึก: {e.recorder.nickname}</p>
+                  <p>ผู้บันทึก: {e.recorder?.nickname}</p>
                   <p>{formatDateWithTime(e.updatedAt)}</p>
                   <p>งวดหวย: {formatDate(e.date.date)}</p>
                 </div>

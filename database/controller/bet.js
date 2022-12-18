@@ -1,6 +1,7 @@
 import connectDB from "../connectDB";
 import Bet from "../../model/bet";
 import Lotto from "../../model/lotto"
+import User from "../../model/user";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function postBet(req, res) {
@@ -32,12 +33,68 @@ export async function getBetsLasted20(req, res) {
   console.log('form database controller getBetsLasted20 ')
     try {
       await connectDB();
-      const result = await Bet.find()
-        .populate({ path: "date", select: "date" }) 
-        .populate({ path: "user", select: "nickname" })
-        .populate({ path: "recorder", select: "nickname" })
-        .sort({ updatedAt: -1 })
-        .limit(20);
+      // const result = await Bet.find()
+      //   .populate({ path: "date", select: "date" }) 
+      //   .populate({ path: "user", select: "nickname" })
+      //   .populate({ path: "recorder", select: "nickname" })
+      //   .sort({ updatedAt: -1 })
+      //   .limit(20);
+      const result = await Bet.aggregate([
+        {
+          $lookup: {
+            from: 'lottos',
+            localField: 'date',
+            foreignField: '_id',
+            as: '_date',
+            pipeline: [
+              {
+                $project: {
+                  _id: 1,
+                  date: 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user',
+            foreignField: '_id',
+            as: '_user',
+            pipeline: [
+              {$project: {_id: 1, nickname: 1}}
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'recorder',
+            foreignField: '_id',
+            as: '_recorder',
+            pipeline: [
+              {$project: {_id: 1, nickname: 1}}
+            ]
+          }
+        },
+        {$sort: { updatedAt: -1 }},
+        {
+          $limit: 20
+        },
+        {
+          $project: {
+            _id: 1,
+            type: 1,
+            price: 1,
+            numberString: 1,
+            updatedAt: 1,
+            date: { "$arrayElemAt": [ "$_date", 0 ] } ,
+            user: { "$arrayElemAt": [ "$_user", 0 ] } ,
+            recorder: { "$arrayElemAt": [ "$_recorder", 0 ] }
+          }
+        }
+      ])
       // console.log(result)
       res.status(200).json(result);
     } catch (error) {

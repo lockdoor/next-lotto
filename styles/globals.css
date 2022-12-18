@@ -54,3 +54,7 @@ body {
   @apply border border-green-300 block rounded-md outline-green-400 px-2 py-2 text-2xl w-20 xl:w-28
 }
 
+.text-error-message{
+  @apply text-center text-red-600 capitalize underline
+}
+

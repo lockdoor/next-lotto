@@ -6,8 +6,13 @@ import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function getWinByLottoDateId(req, res) {
   console.log("database controller getWinByLottoDateId worked ", req.query);
+  const { lottoDateId } = req.query;
+  if (!lottoDateId || lottoDateId === "undefined") {
+    responseError(res, 400, "required lottoDateId");
+    return;
+  }
   try {
-    const { lottoDateId } = req.query;
+    
     await connectDB();
     const win = await Win.findOne({ date: lottoDateId });
     // console.log(lotto)

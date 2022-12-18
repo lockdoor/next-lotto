@@ -8,13 +8,13 @@ import {
 } from "../../../lib/clientRequest/forbidden";
 import { useQueryClient, useMutation } from "react-query";
 import { getLottoCurrent } from "../../../lib/helper";
-
 export default function FormCreateForbiddenNumber() {
   const lottoCurrent = getLottoCurrent();
   const [numberLength, setNumberLength] = useState(2);
   const [numberString, setNumberString] = useState("");
   const [type, setType] = useState("A");
   const [errorMessage, setErrorMessage] = useState("");
+  
 
   const queryClient = useQueryClient();
   const postMutation = useMutation(postForbidden, {
@@ -58,6 +58,7 @@ export default function FormCreateForbiddenNumber() {
           onSubmit={onSubmitHandler}
           className="border border-green-400 bg-white inline-block my-5 p-5 rounded-md"
         >
+          {errorMessage && <div className="text-error-message">{errorMessage}</div>}
           <div className="flex flex-row gap-5 justify-center">
             <div className="border border-pink-300 px-5 py-3 rounded-md text-left">
               <RadioNumberLength onChangeRadioBtn={onChangeRadioNumberBtn} />
@@ -98,6 +99,9 @@ export default function FormCreateForbiddenNumber() {
       ) : (
         <div>หวยงวดนี้ปิดแล้ว</div>
       )}
+      
     </div>
   );
 }
+
+
