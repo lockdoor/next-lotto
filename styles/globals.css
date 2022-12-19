@@ -58,3 +58,11 @@ body {
   @apply text-center text-red-600 capitalize underline
 }
 
+.text-dashboard-header1{
+  @apply text-2xl underline decoration-green-300
+}
+
+.text-dashboard-header2{
+  @apply text-xl underline decoration-pink-300
+}
+

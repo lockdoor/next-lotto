@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getLottoCurrent, translateType } from "../../../lib/helper";
+import { getLottoCurrent, translateType, ratio } from "../../../lib/helper";
 import { getKeepAndSendDataByTypeAndLottoDateId } from "../../../lib/clientRequest/keepAndSend";
 import { useQuery } from "react-query";
 import { FaSort } from "react-icons/fa";
@@ -51,15 +51,15 @@ export default function Table({ type }) {
       }
     });
   };
-  const ratio = (type) => {
-    switch(type){
-      case 'up3': case 'down3': return 1000
-      case 'set3up': return 220
-      case 'up2': case 'down2': return 100
-      case 'uprun': case 'downrun': return 10
-      default: break
-    }
-  }
+  // const ratio = (type) => {
+  //   switch(type){
+  //     case 'up3': case 'down3': return 1000
+  //     case 'set3up': return 220
+  //     case 'up2': case 'down2': return 100
+  //     case 'uprun': case 'downrun': return 10
+  //     default: break
+  //   }
+  // }
 
   // console.log(data)
 
