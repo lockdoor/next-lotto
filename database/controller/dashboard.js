@@ -269,8 +269,12 @@ export async function getNumberDetail(req, res){
             }
           ]
         }
+      },
+      {
+        $match: {$expr: {$eq: ['$_id', {$toObjectId: lottoDateId}]}}
       }
     ])
+    // console.log(result)
     res.status(200).json(result[0])
   }
   catch (error) {

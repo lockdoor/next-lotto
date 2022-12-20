@@ -74,7 +74,7 @@ const Card = ({ forbidden, type, onClickForbiddenHandler }) => {
               {e.numberString}
             </span>
           ) : (
-            <div key={e._id}></div>
+            <span key={e._id} className='hidden'></span>
           );
         })}
       </div>

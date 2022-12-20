@@ -2,11 +2,13 @@ import React from 'react'
 import { useQuery } from 'react-query'
 import { getNumberDetail } from '../../../lib/clientRequest/dashboard'
 import { translateType, numberWithCommas } from '../../../lib/helper'
+import NullData from './nullData'
 
 export default function NumberDetail({lottoCurrent}) {
   const {isLoading, isError, error, data} = useQuery(["getNumberDetail", lottoCurrent?._id], getNumberDetail)
-  if (isLoading) return <div>Forbidden is Loading</div>;
+  if (isLoading) return <div>NumberDetail is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
+  if (!data?.bet.length) return <NullData title={'อันดับเลขฮิต'} />
   // console.log(data)
   return (
     <div className='border-4 border-green-300 rounded-md p-5 my-5 bg-white text-center'>
