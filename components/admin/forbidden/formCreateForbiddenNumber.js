@@ -5,6 +5,7 @@ import { checkNumberInput } from "../../../lib/helper";
 import {
   postForbidden,
   getForbiddenByLottoDateId,
+  getBetByForbiddenNumber
 } from "../../../lib/clientRequest/forbidden";
 import { useQueryClient, useMutation } from "react-query";
 import { getLottoCurrent } from "../../../lib/helper";
@@ -28,6 +29,8 @@ export default function FormCreateForbiddenNumber() {
           ["getForbiddenByLottoDateId", lottoCurrent._id],
           getForbiddenByLottoDateId
         );
+        queryClient.prefetchQuery(["getBetByForbiddenNumber", lottoCurrent?._id],
+        getBetByForbiddenNumber)
       }
     },
   });

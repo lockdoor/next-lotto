@@ -7,6 +7,7 @@ import { useQueryClient, useMutation } from "react-query";
 import {
   deleteForbidden,
   getForbiddenByLottoDateId,
+  getBetByForbiddenNumber
 } from "../../../lib/clientRequest/forbidden";
 import MyModal from "../../../components/myModal";
 
@@ -92,6 +93,8 @@ const ContentModalForbiddenEdit = ({ forbidden, setShowModal }) => {
         ["getForbiddenByLottoDateId", date],
         getForbiddenByLottoDateId
       );
+      queryClient.prefetchQuery(["getBetByForbiddenNumber", date],
+      getBetByForbiddenNumber)
     },
   });
 

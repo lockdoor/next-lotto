@@ -31,7 +31,6 @@ export default function Forbidden() {
       <ForbiddenTable forbidden={data}/>
 
       {/* bet table */}
-      {/* <ForbiddenBetTable forbidden={data}/> */}
       <ForbiddenBetTable lottoCurrent={lottoCurrent}/>
 
     </Layout>
