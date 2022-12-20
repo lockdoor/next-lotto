@@ -9,19 +9,19 @@ export async function postForbidden(req, res) {
   try {
     await connectDB();
     const lotto = await Lotto.findById(req.body.date);
-    if (lotto.isOpen) {
-      const { type, numberString, date } = req.body;
-      const forbidden = await Forbidden.findOne({ type, numberString, date });
-      if (forbidden) {
-        responseError(res, 400, "postForbidden is already");
-        return;
-      }
-      const result = await Forbidden.create(req.body);
-      console.log(result);
-      responseSuccess(res, 201, "Forbidden create success");
-    } else {
+    if (!lotto.isOpen) {
       responseError(res, 400, "postForbidden error lotto not open");
+      return
     }
+    const { type, numberString, date } = req.body;
+    const forbidden = await Forbidden.findOne({ type, numberString, date });
+    if (forbidden) {
+      responseError(res, 400, "postForbidden is already");
+      return;
+    }
+    const result = await Forbidden.create(req.body);
+    console.log(result);
+    responseSuccess(res, 201, "Forbidden create success");   
   } catch (error) {
     console.log("error by catch controller postForbidden", error);
     responseError(res, 400, "error by catch controller postForbidden");

@@ -25,6 +25,7 @@ export default function Layout({ title, children, actionIcon }) {
   return (
     <div className=" container mx-auto">
       <Head>
+        <meta name="theme-color" content="#F9A8D4" />
         <title>{title}</title>
       </Head>
       <header className="h-14 flex flex-row bg-pink-300 sticky top-0 z-10">
