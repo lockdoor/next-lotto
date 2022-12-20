@@ -10,7 +10,7 @@ export default function TotalBet({lottoCurrent}) {
   return (
     <div className="border-4 border-green-300 w-full p-5 my-5 rounded-md bg-white text-center">
       <div className='text-dashboard-header1'>ยอดรวมทั้งหมด</div>
-      <div className=' md:relative md:translate-y-1/2 text-6xl text-blue-600'>{ numberWithCommas(data.totalBet) }</div>
+      <div className=' md:relative md:translate-y-1/2 text-6xl text-blue-600'>{ numberWithCommas(data?.totalBet) }</div>
     </div>    
   )
 }
