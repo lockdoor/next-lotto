@@ -40,38 +40,6 @@ export async function postWin(req, res) {
   }
 }
 
-export async function getWinnerByLottoDateIdAndTypeAndNumberString(req, res) {
-  try {
-    // console.log(
-    //   "database controller getWinnerByLottoDateIdAndTypeAndNumberString worked ",
-    //   req.query.params
-    // );
-
-    let [date, type, number] = req.query.params;
-    let numArr = [number];
-    if (type === "down3") numArr = number.match(/.{1,3}/g);
-    if (type === "uprun" || type === "downrun")
-      numArr = number.match(/.{1,1}/g);
-    await connectDB();
-    const result = await Bet.find({ date, type, numberString: { $in: numArr } })
-      .populate({ path: "user", select: "_id nickname" })
-      .sort({ price: -1 })
-      .select("numberString price date");
-    // console.log(result);
-    res.status(200).json(result);
-  } catch (error) {
-    console.log(
-      "error by catch controller getWinnerByLottoDateIdAndTypeAndNumberString",
-      error
-    );
-    responseError(
-      res,
-      400,
-      `error by catch controller getWinnerByLottoDateIdAndTypeAndNumberString ${error}`
-    );
-  }
-}
-
 export async function putWin(req, res) {
   try {
     console.log("database controller putWin worked ", req.body);
@@ -90,5 +58,99 @@ export async function putWin(req, res) {
   } catch (error) {
     console.log("error by catch controller putWin", error);
     responseError(res, 400, "error by catch controller putWin");
+  }
+}
+
+export async function getWinner(req, res){
+  console.log('getWinner work ', req.query)
+  const {lottoDateId} = req.query
+  try{
+    await connectDB()
+    const win = await Win.findOne({date: lottoDateId})
+    const up3 = win.first.slice(3)
+    const set3up = up3.split("").sort((a,b) => a-b).join("")
+    const down3 = [win.first3_1, win.first3_2, win.last3_1, win.last3_2]
+    const up2 = win.first.slice(4)
+    const down2 = win.last2
+    const uprun = up3.split('')
+    const downrun = down2.split('')
+    const result = await Lotto.aggregate([
+      {
+        $lookup: {
+          from: 'bets',
+          localField: '_id',
+          foreignField: 'date',
+          as: 'bet',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'user',
+                pipeline: [
+                  {
+                    $project: {nickname: 1}
+                  }
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'recorder',
+                foreignField: '_id',
+                as: 'recorder',
+                pipeline: [
+                  {
+                    $project: {nickname: 1}
+                  }
+                ]
+              }
+            },
+            {
+              $match: {$expr : {$or: [
+                {$and: [{$eq: ['$type', "up2"]}, {$eq: ['$numberString', up2]}]},
+                {$and: [{$eq: ['$type', "down2"]}, {$eq: ['$numberString', down2]}]},
+                {$and: [{$eq: ['$type', "up3"]}, {$eq: ['$numberString', up3]}]},
+                {$and: [{$eq: ['$type', "set3up"]}, {$eq: ['$numberString', set3up]}]},
+                {$and: [{$eq: ['$type', "down2"]}, {$eq: ['$numberString', down2]}]},
+                {$and: [{$eq: ['$type', "down3"]}, {$in: ['$numberString', down3]}]},
+                {$and: [{$eq: ['$type', "uprun"]}, {$in: ['$numberString', uprun]}]},
+                {$and: [{$eq: ['$type', "downrun"]}, {$in: ['$numberString', downrun]}]},  
+              ]}}
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  type: '$type',
+                  _id: '$_id',
+                  user: {$first: '$user'},
+                  numberString: '$numberString',
+                  price: '$price',
+                  recorder: {$first: '$recorder'}
+                }}
+            },
+            {
+              $group: {_id: '$type', bet: {$push: '$$ROOT'}}
+            }
+          ]
+        }
+      },
+      {
+        $match: {$expr: {$eq: ['$_id', {$toObjectId: lottoDateId}]}}
+      },
+      
+      {
+        $project: {
+          win: "$bet"
+        }
+      }
+    ])
+    res.status(200).json(result[0])
+  }
+  catch (error) {
+    console.log("error by catch controller getWinner", error);
+    responseError(res, 400, "error by catch controller getWinner");
   }
 }

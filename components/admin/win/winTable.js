@@ -5,7 +5,6 @@ import { useQueryClient, useMutation } from "react-query";
 import { putWin, getWinByLottoDateId } from "../../../lib/clientRequest/win";
 export default function WinTable({ data }) {
   const {date, first, first3_1, first3_2, last2, last3_1, last3_2} = data
-  // console.log(data)
   const [showModal, setShowModal] = useState(false)
   const [selectNum, setSelectNum] = useState('')
   const [selectType, setSelectType] = useState('')
@@ -20,7 +19,6 @@ export default function WinTable({ data }) {
   })
 
   const onClickEdit = (obj) => {
-    // console.log(translateWinKey(obj))
     const type = Object.keys(obj)[0]
     setSelectType(type)
     setSelectNum(obj[type])

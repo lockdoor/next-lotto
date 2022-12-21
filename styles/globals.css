@@ -66,3 +66,14 @@ body {
   @apply text-xl underline decoration-pink-300
 }
 
+.globals-table{
+  @apply w-full max-w-xl mx-auto my-10
+}
+
+.globals-table-th{
+  @apply py-2 bg-blue-300
+}
+
+/* .globals-table-td{
+  @apply
+} */

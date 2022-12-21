@@ -31,11 +31,11 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
   if (isError) return <div>Got Error {error}</div>;
 
   return (
-    <>
+    <div className="px-5">
       {data.forbidden.map((forbidden) => {
         if (!forbidden.bet.length) return <div key={forbidden._id}></div>;
         return (
-          <table key={forbidden._id} className="w-full max-w-xl mx-auto my-10">
+          <table key={forbidden._id} className="globals-table">
             <caption
               className={`text-2xl text-${textColorByForbiddenType(
                 forbidden.type
@@ -46,19 +46,19 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
             </caption>
             <thead>
               <tr>
-                <th className="py-2 bg-blue-300">เลข</th>
-                <th className="py-2 bg-blue-300">ราคา</th>
-                <th className="py-2 bg-blue-300">ประเภท</th>
-                <th className="py-2 bg-blue-300">ลูกค้า</th>
-                <th className="py-2 bg-blue-300"></th>
+                <th className="globals-table-th">เลข</th>
+                <th className="globals-table-th">ราคา</th>
+                <th className="globals-table-th">ประเภท</th>
+                <th className="globals-table-th">ลูกค้า</th>
+                <th className="globals-table-th"></th>
               </tr>
             </thead>
             <tbody>
-              {forbidden.bet.map((e, i) => {
+              {forbidden.bet.map((e, index) => {
                 return (
                   <tr
                     key={e._id}
-                    className={`${i % 2 == 0 ? "bg-blue-50" : "bg-blue-100"}`}
+                    className={`${index % 2 == 0 ? "bg-blue-50" : "bg-blue-100"}`}
                   >
                     <td className="py-2 pl-3 w-14">{e.numberString}</td>
                     <td className="py-2 text-end pr-3 w-16">{e.price}</td>
@@ -84,7 +84,7 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
           lottoCurrent={lottoCurrent}
         />
       </MyModal>
-    </>
+    </div>
   );
 }
 
@@ -106,7 +106,7 @@ const ModalDelete = ({ onClose, bet, lottoCurrent }) => {
     deleteMutation.mutate(bet._id);
   };
   return (
-    <div className=" max-w-sm mx-auto my-10">
+    <div className=" max-w-sm mx-auto my-10 ">
       <table className="w-full">
         <caption className="text-2xl text-red-500 mb-5">ต้องการลบ</caption>
         <thead>
