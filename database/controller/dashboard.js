@@ -25,21 +25,6 @@ export async function putLottoSettings(req, res) {
   }
 }
 
-export async function getLottoById(req, res) {
-  console.log("getLottoById work, ", req.query);
-  try {
-    await connectDB();
-    // const {isOpen, userBet, _id} = req.body
-    const result = await Lotto.findById(req.query.lottoDateId);
-    console.log(result);
-    // responseSuccess(res, 201, result)
-    res.status(201).json(result);
-  } catch (error) {
-    console.log("error by catch controller getLottoById", error);
-    responseError(res, 400, "error by catch controller getLottoById");
-  }
-}
-
 export async function getTotalBet(req, res) {
   console.log("getTotalBet Work ", req.query);
   const { lottoDateId } = req.query;

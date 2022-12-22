@@ -7,7 +7,6 @@ import {
   formatDate,
   isForbidden,
   textColorByForbiddenType,
-  getLottoCurrent
 } from "../../../lib/helper";
 import { RiDeleteBin2Line, RiEdit2Line } from "react-icons/ri";
 import MyModal from "../../myModal";
@@ -15,10 +14,10 @@ import ContentModalEdit from "./contentModalEdit";
 import Link from "next/link";
 import React, { useState } from "react";
 
-export default function BetTable() {
+export default function BetTable({lottoCurrent}) {
   // console.log(forbidden)
 
-  const lottoCurrent = getLottoCurrent()
+
   const { isLoading, isError, data, error } = useQuery(
     "getBetsLasted20",
     getBetsLasted20

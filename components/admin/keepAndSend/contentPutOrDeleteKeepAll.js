@@ -6,11 +6,9 @@ import {
   getKeepAndSendDataByTypeAndLottoDateId,
   deleteKeepAll,
 } from "../../../lib/clientRequest/keepAndSend";
-import { getLottoCurrent } from "../../../lib/helper";
 
 // component นี้จะทำให้มีการแนะนำต่าง ๆ ว่ามีเลขเท่าไหร่ควรตัดที่เท่าไหร่ กำไรเท่าไหร่
-export default function ContentPutOrDeleteKeepAll({ data, setShowModal, keepMaxPrice }) {
-  const lottoCurrent = getLottoCurrent()
+export default function ContentPutOrDeleteKeepAll({ data, setShowModal, keepMaxPrice, lottoCurrent }) {
   const [price, setPrice] = useState(data.keepAll.price);
   // const form = useRef(null)
   const queryClient = useQueryClient();

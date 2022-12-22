@@ -6,11 +6,11 @@ import {
 import { useQueryClient, useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { closeFormEditUser } from "../../../redux/userSlice";
-import { getLottoCurrent } from "../../../lib/helper";
+// import { getLottoCurrent } from "../../../lib/helper";
 
-export default function FormEditUser({ user }) {
+export default function FormEditUser({ user, lottoCurrent }) {
   // console.log(userId);
-  const lottoCurrent = getLottoCurrent();
+  // const lottoCurrent = getLottoCurrent();
   const [nickname, setNickname] = useState(user.nickname);
   const [discount, setDiscount] = useState(user.discount);
   const [username, setUsername] = useState(user.username);

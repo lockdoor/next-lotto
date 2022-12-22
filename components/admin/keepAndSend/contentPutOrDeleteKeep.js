@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { translateType, getLottoCurrent } from '../../../lib/helper'
+import { translateType } from '../../../lib/helper'
 import { useQueryClient, useMutation } from 'react-query'
 import { putKeep, deleteKeep, getKeepAndSendDataByTypeAndLottoDateId } from '../../../lib/clientRequest/keepAndSend'
 
-export default function ContentPutOrDeleteKeep({number, setShowModal}) {
+export default function ContentPutOrDeleteKeep({number, setShowModal, lottoCurrent}) {
 
-  const lottoCurrent = getLottoCurrent()
+
   const [price, setPrice] = useState(number.keep.price) 
   const queryClient = useQueryClient()
 

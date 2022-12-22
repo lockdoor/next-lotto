@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getLottoCurrent, translateType, ratio } from "../../../lib/helper";
+import { translateType, ratio } from "../../../lib/helper";
 import { getKeepAndSendDataByTypeAndLottoDateId } from "../../../lib/clientRequest/keepAndSend";
 import { useQuery } from "react-query";
 import { FaSort } from "react-icons/fa";
@@ -7,8 +7,8 @@ import KeepAll from "./keepAll";
 import Keep from "./keep";
 // import MyModal from "../../myModal";
 
-export default function Table({ type }) {
-  const lottoCurrent = getLottoCurrent();
+export default function Table({ type, lottoCurrent }) {
+
   // sort case = totalAsc, totalDesc, numberAsc, numberDesc
   const [sort, setSort] = useState("totalAsc");
   // const [showSendModal, setShowSendModal] = useState(false)
@@ -51,17 +51,6 @@ export default function Table({ type }) {
       }
     });
   };
-  // const ratio = (type) => {
-  //   switch(type){
-  //     case 'up3': case 'down3': return 1000
-  //     case 'set3up': return 220
-  //     case 'up2': case 'down2': return 100
-  //     case 'uprun': case 'downrun': return 10
-  //     default: break
-  //   }
-  // }
-
-  // console.log(data)
 
   if (data.length === 0) {
     return <div className="text-center">ยังไม่มีรายการ</div>;
@@ -72,7 +61,7 @@ export default function Table({ type }) {
         <caption className="text-2xl">
           <div>{translateType(type)}</div>
           {/* onClick open modal to add number save to keepAll model */}
-          <KeepAll data={data} />
+          <KeepAll data={data} lottoCurrent={lottoCurrent}/>
         </caption>
         <thead className="border-2 border-pink-300 bg-lime-300">
           <tr>
@@ -116,14 +105,14 @@ export default function Table({ type }) {
             </th>
           </tr>
         </thead>
-        <DataSort data={data} sort={sort} />
+        <DataSort data={data} sort={sort} lottoCurrent={lottoCurrent}/>
       </table>
       {/* <MyModal isOpen={showSendModal} onClose={setShowSendModal}><div></div></MyModal> */}
     </>
   );
 }
 
-const DataSort = ({ data, sort }) => {
+const DataSort = ({ data, sort, lottoCurrent }) => {
   // console.log(sort);
   const sortData = (data, sort) => {
     // sort case = totalAsc, totalDesc, numberAsc, numberDesc
@@ -163,7 +152,7 @@ const DataSort = ({ data, sort }) => {
             {e.totalPrice}
           </td>
           <td>
-            <Keep number={e} />
+            <Keep number={e} lottoCurrent={lottoCurrent}/>
           </td>
           <td className="text-center border-x-2 border-pink-300">{e.send}</td>
         </tr>

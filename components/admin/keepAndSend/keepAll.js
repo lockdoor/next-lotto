@@ -4,10 +4,10 @@ import ContentPutOrDeleteKeepAll from "./contentPutOrDeleteKeepAll";
 import ContentPostKeepAll from "./contentPostKeepAll";
 import { AiOutlinePlusSquare } from "react-icons/ai";
 import { RiDeleteBin2Line, RiEdit2Line } from "react-icons/ri";
-import { getLottoCurrent } from "../../../lib/helper";
 
-export default function KeepAll({ data }) {
-  const lottoCurrent = getLottoCurrent()
+
+export default function KeepAll({ data, lottoCurrent }) {
+
   const [showPostModal, setShowPostModal] = useState(false);
   const [showPutOrDeleteKeepAll, setShowPutOrDeleteKeepAll] = useState(false);
   const keepMaxPrice = data.reduce(
@@ -58,6 +58,7 @@ export default function KeepAll({ data }) {
           type={data[0].type}
           setShowModal={setShowPostModal}
           keepMaxPrice={keepMaxPrice}
+          lottoCurrent={lottoCurrent}
         />
       </MyModal>
       <MyModal
@@ -68,6 +69,7 @@ export default function KeepAll({ data }) {
           data={data[0]}
           setShowModal={setShowPutOrDeleteKeepAll}
           keepMaxPrice={keepMaxPrice}
+          lottoCurrent={lottoCurrent}
         />
       </MyModal>
     </div>

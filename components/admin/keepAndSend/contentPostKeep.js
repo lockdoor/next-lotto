@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { translateType, getLottoCurrent } from "../../../lib/helper";
+import { translateType } from "../../../lib/helper";
 import { useQueryClient, useMutation } from "react-query";
 import {
   postKeepByTypeNumberLottoDateId,
   getKeepAndSendDataByTypeAndLottoDateId,
 } from "../../../lib/clientRequest/keepAndSend";
 
-export default function ContentPostKeep({ number, setShowModal }) {
-  const lottoCurrent = getLottoCurrent();
+export default function ContentPostKeep({ number, setShowModal, lottoCurrent }) {
+
   const [price, setPrice] = useState("");
   const queryClient = useQueryClient();
   const postMutation = useMutation(postKeepByTypeNumberLottoDateId, {

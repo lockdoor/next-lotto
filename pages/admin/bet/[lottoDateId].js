@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import Layout from "../../../components/admin/layoutAdmin";
 import Autocomplete from "../../../components/admin/bet/autocomplete";
 import Advice from "../../../components/admin/bet/advice";
@@ -9,9 +9,14 @@ import { checkNumberInput } from "../../../lib/helper";
 import { useSession } from "next-auth/react";
 import betSubmit from "../../../lib/bet/betSubmit";
 import { getBetsLasted20, postBet } from "../../../lib/clientRequest/bet";
-import { useQueryClient, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useRouter } from "next/router";
+import getLottoCurrent from "../../../lib/getLottoCurrent";
+import { dateToInputValue } from "../../../lib/helper";
+import { getLottoById } from "../../../lib/clientRequest/lotto";
 
-export default function Bet() {
+
+export default function Bet({lottoCurrent}) {
   const { data: session } = useSession();
   const [numberLength, setNumberLength] = useState(2);
   const [numberString, setNumberString] = useState("");
@@ -21,14 +26,16 @@ export default function Bet() {
   const [user, setUser] = useState("");
   const [userId, setUserId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [lottoCurrent, setLottoCurrent] = useState(null)
   const focusInput = useRef(null);
-
-  useEffect(()=>{
-    setLottoCurrent(JSON.parse(localStorage.getItem('lottoCurrent')))
-  },[])
+  const lotto = JSON.parse(lottoCurrent)
+  const router = useRouter()
+  useEffect(() => {
+    router.push(`/admin/bet/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
+  }, [])
 
   const queryClient = useQueryClient();
+  const {isLoading, isError, data, error} = useQuery(['getLottoById', lotto._id], getLottoById)
+
 
   const postMutation = useMutation(postBet, {
     onSuccess: (response) => {
@@ -57,7 +64,7 @@ export default function Bet() {
   const onSubmitHandle = (e) => {
     e.preventDefault();
     const recorder = session.token._id;
-    const lottoDateId = lottoCurrent._id;
+    const lottoDateId = data._id;
     const numbers = betSubmit(
       userId,
       numberLength,
@@ -76,9 +83,13 @@ export default function Bet() {
     postMutation.mutate(numbers);
   };
 
+  if (isLoading) return <div>Bet is Loading</div>;
+  if (isError) return <div>Got Error {error}</div>;
+
+  console.log(data)
   return (
-    <Layout title={"คีย์หวย"}>
-      {lottoCurrent?.isOpen ? (
+    <Layout title={"คีย์หวย"} lottoCurrent={data}>
+      {data.isOpen ? (
         <main className="px-2">
           <div className="flex flex-col  xl:flex-row justify-around">
             {/* form */}
@@ -124,7 +135,7 @@ export default function Bet() {
             </form>
 
             {/* table */}
-            <BetTable />
+            <BetTable lottoCurrent={data}/>
           </div>
         </main>
       ) : (
@@ -133,3 +144,5 @@ export default function Bet() {
     </Layout>
   );
 }
+
+export const getServerSideProps = async (context) => getLottoCurrent(context)

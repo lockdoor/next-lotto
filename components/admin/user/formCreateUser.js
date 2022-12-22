@@ -6,10 +6,10 @@ import {
 import { useQueryClient, useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { closeFormCreateUser } from "../../../redux/userSlice";
-import { getLottoCurrent } from "../../../lib/helper";
+// import { getLottoCurrent } from "../../../lib/helper";
 
-export default function FormCreateUser() {
-  const lottoCurrent = getLottoCurrent();
+export default function FormCreateUser({lottoCurrent}) {
+  // const lottoCurrent = getLottoCurrent();
   const [nickname, setNickname] = useState("");
   const [discount, setDiscount] = useState(0);
   const [username, setUsername] = useState("");

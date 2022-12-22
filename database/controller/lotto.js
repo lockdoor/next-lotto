@@ -72,22 +72,18 @@ export async function deleteLotto(req, res){
     }
 }
 
-// export async function getLottoById(req, res){
-//   console.log('database controller getLottoById worked')
-//   const token = await getToken({ req });
-//   if (token.role === "admin") {
-//     try {
-//       const {lottoDateId} = req.query
-//       await connectDB();
-//       const lotto = await Lotto.findOne({_id: lottoDateId})
-//       // console.log(lotto)
-//       res.status(200).json(lotto)
-//     } catch (error) {
-//       console.log("error by catch controller getLottoById", error);
-//       responseError(res, 400, "error by catch controller getLottoById");
-//     }
-//   } else {
-//     responseError(res, 403, "protect api by token");
-//   }
-// }
+export async function getLottoById(req, res) {
+  console.log("getLottoById work, ", req.query);
+  try {
+    await connectDB();
+    // const {isOpen, userBet, _id} = req.body
+    const result = await Lotto.findById(req.query.lottoDateId);
+    console.log(result);
+    // responseSuccess(res, 201, result)
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("error by catch controller getLottoById", error);
+    responseError(res, 400, "error by catch controller getLottoById");
+  }
+}
 

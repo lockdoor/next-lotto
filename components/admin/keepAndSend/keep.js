@@ -4,10 +4,10 @@ import MyModal from '../../myModal';
 import ContentPostKeep from './contentPostKeep';
 import ContentPutOrDeleteKeep from './contentPutOrDeleteKeep';
 import {RiDeleteBin2Line, RiEdit2Line} from "react-icons/ri"
-import { getLottoCurrent } from '../../../lib/helper';
 
-export default function Keep({number}) {
-  const lottoCurrent = getLottoCurrent()
+
+export default function Keep({number, lottoCurrent}) {
+
   const [showPutOrDeleteKeep, setShowPutOrDeleteKeep] = useState(false)
   const [showPostKeep, setShowPostKeep] = useState(false)
   // console.log(number)
@@ -48,10 +48,10 @@ export default function Keep({number}) {
         
       </div>
       <MyModal isOpen={showPostKeep} onClose={setShowPostKeep}>
-        <ContentPostKeep number={number} setShowModal={setShowPostKeep}/>
+        <ContentPostKeep number={number} setShowModal={setShowPostKeep} lottoCurrent={lottoCurrent}/>
       </MyModal>
       <MyModal isOpen={showPutOrDeleteKeep} onClose={setShowPutOrDeleteKeep}>
-        <ContentPutOrDeleteKeep number={number} setShowModal={setShowPutOrDeleteKeep}/>
+        <ContentPutOrDeleteKeep number={number} setShowModal={setShowPutOrDeleteKeep} lottoCurrent={lottoCurrent}/>
       </MyModal>
     </>
   )

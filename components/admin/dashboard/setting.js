@@ -1,45 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { putLottoSettings } from "../../../lib/clientRequest/dashboard";
+import { getLottoById } from "../../../lib/clientRequest/lotto";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 
 export default function Setting({ lottoCurrent }) {
-  const [isOpen, setIsOpen] = useState("");
-  const [userBet, setUserBet] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  useEffect(() => {
-    const lottoCurrent = JSON.parse(localStorage.getItem("lottoCurrent"));
-    setIsOpen(lottoCurrent.isOpen);
-    setUserBet(lottoCurrent.userBet);
-  }, []);
+  const {isLoading, isError, data, error} = useQuery(['getLottoById', lottoCurrent._id], getLottoById)
 
-  const onChangeSwitch = async (feature) => {
+  const queryClient = useQueryClient()
+  const putMutation = useMutation(putLottoSettings, {
+    onSuccess: (response) => {
+      if (response?.data?.hasError) {
+        setErrorMessage(response.data.message);
+      }else{
+      queryClient.prefetchQuery(['getLottoById', lottoCurrent._id], getLottoById)
+      setErrorMessage("");
+
+      }
+    }
+  })
+
+  if (isLoading) return <div>Setting is Loading</div>;
+  if (isError) return <div>Got Error {error}</div>;
+
+  const onChangeSwitch = (feature) => {
     const payload =
       feature === "isOpen"
-        ? { isOpen: !isOpen, userBet, _id: lottoCurrent._id }
-        : { isOpen: isOpen, userBet: !userBet, _id: lottoCurrent._id };
-    const response = await putLottoSettings(payload);
-    if (response?.data?.hasError) {
-      setErrorMessage(response.data.message);
-    } else {
-      localStorage.setItem("lottoCurrent", JSON.stringify(response));
-      setErrorMessage("");
-      setIsOpen(response.isOpen);
-      setUserBet(response.userBet);
-    }
+        ? { isOpen: !data.isOpen, userBet: data.userBet, _id: lottoCurrent._id }
+        : { isOpen: data.isOpen, userBet: !data.userBet, _id: lottoCurrent._id };
+    putMutation.mutate(payload)
+    
   };
 
   return (
     <div className="border-4 border-green-300 w-full my-5 p-5 rounded-md bg-white text-center">
       <div className="text-dashboard-header1">ตั้งค่า</div>
       {errorMessage && <div>{errorMessage}</div>}
-      {/* <div className="inline-block text-start" > */}
       <div className="md:relative inline-block md:translate-y-1/2 text-start" >
         <ToggleSwitch
-          checked={isOpen}
+          checked={data.isOpen}
           setChecked={() => onChangeSwitch("isOpen")}
           title={"เปิดใช้งาน"}
         />
         <ToggleSwitch
-          checked={userBet}
+          checked={data.userBet}
           setChecked={() => onChangeSwitch("userBet")}
           title={"เปิดให้ลูกค้าซื้อ"}
         />

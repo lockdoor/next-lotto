@@ -1,6 +1,6 @@
-import { getLottoById } from "../../../../../database/controller/dashboard";
+import { getLottoById } from "../../../../database/controller/lotto";
 import { getToken } from "next-auth/jwt";
-import { responseError } from "../../../../../lib/responseJson";
+import { responseError } from "../../../../lib/responseJson";
 export default async function handler(req, res){
   const token = await getToken({req})
   if(token?.role === "admin"){

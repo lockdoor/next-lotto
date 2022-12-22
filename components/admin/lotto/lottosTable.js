@@ -3,10 +3,10 @@ import { getLottos } from "../../../lib/clientRequest/lotto";
 import { useQuery } from "react-query";
 import { formatDate } from "../../../lib/helper";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
-import { useRouter } from "next/router";
 import MyModal from "../../myModal";
 import ContentModalLottoEdit from "./contentModalLottoEdit";
 import ContentModalLottoDelete from "./contentModalLottoDelete";
+import Link from "next/link";
 
 export default function LottoTable() {
   const { isLoading, isError, data, error } = useQuery("getLottos", getLottos);
@@ -34,7 +34,6 @@ export default function LottoTable() {
 function Card({ data }) {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false)
-  const router = useRouter()
   
   const editHandler = () => {
     setShowModalEdit(true);
@@ -44,19 +43,11 @@ function Card({ data }) {
     setShowModalDelete(true)
   }
 
-  const selectLottoDate = () => {
-    localStorage.setItem('lottoCurrent', JSON.stringify(data))
-    router.replace('/admin/dashboard')
-  }
-
   return (
     <div className={` border-2 ${data.isOpen ? "border-pink-300 bg-white" : "border-gray-200 bg-gray-200 text-gray-300"}  p-10 rounded-md`}>
       <div className="flex items-center justify-between">
-        <p 
-          onClick={selectLottoDate} 
-          className=" cursor-pointer">
-          {formatDate(data.date)}
-        </p>
+        
+        <Link href={`/admin/dashboard/${data.date}`}>{formatDate(data.date)}</Link>
         <div className="flex">
           {/* ปิดการลบหวยไว้ ก่อนลบต้องมีการตรวจสอบอีกหลายอย่าง */}
         {!data.isOpen && <MdDeleteForever

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { getLottoCurrent } from "../../../lib/helper";
 import { useQueryClient, useMutation } from "react-query";
 import { postWin, getWinByLottoDateId } from "../../../lib/clientRequest/win";
 import { checkNumberInput } from "../../../lib/helper";
 
-export default function ContentModalPost({ onClose }) {
-  const lottoCurrent = getLottoCurrent();
+export default function ContentModalPost({ setShowModal, lottoCurrent }) {
   const [first, setFirst] = useState("");
   const [last2, setLast2] = useState("");
   const [first3_1, setFirst3_1] = useState("");
@@ -20,7 +18,7 @@ export default function ContentModalPost({ onClose }) {
         ["getWinByLottoDateId", lottoCurrent._id],
         getWinByLottoDateId
       );
-      onClose(false);
+      setShowModal(false);
     },
   });
 
@@ -43,11 +41,11 @@ export default function ContentModalPost({ onClose }) {
         <div className="my-3 flex justify-center gap-10">
           <div>
             <div className="text-center">รางวัลที่1</div>
-            <Input length={6} value={first} setValue={setFirst} focus={true} />
+            <Input id={'first'} length={6} value={first} setValue={setFirst} focus={true} />
           </div>
           <div>
             <div className="text-center">เลขท้าย2ตัว</div>
-            <Input length={2} value={last2} setValue={setLast2} />
+            <Input id={'last2'} length={2} value={last2} setValue={setLast2} />
           </div>
         </div>
 
@@ -55,15 +53,15 @@ export default function ContentModalPost({ onClose }) {
           <div>
             <div className="text-center">เลขหน้า3ตัว</div>
             <div className="flex gap-5">
-              <Input length={3} value={first3_1} setValue={setFirst3_1} />
-              <Input length={3} value={first3_2} setValue={setFirst3_2} />
+              <Input id={'first3_1'} length={3} value={first3_1} setValue={setFirst3_1} />
+              <Input id={'first3_2'} length={3} value={first3_2} setValue={setFirst3_2} />
             </div>
           </div>
           <div>
             <div className="text-center">เลขท้าย3ตัว</div>
             <div className="flex gap-5">
-              <Input length={3} value={last3_1} setValue={setLast3_1} />
-              <Input length={3} value={last3_2} setValue={setLast3_2} />
+              <Input id={'last3_1'} length={3} value={last3_1} setValue={setLast3_1} />
+              <Input id={'last3_2'} length={3} value={last3_2} setValue={setLast3_2} />
             </div>
           </div>
           
@@ -79,7 +77,7 @@ export default function ContentModalPost({ onClose }) {
           <button
             type="button"
             className="border border-red-300 bg-red-300 w-20 rounded-md hover:border-red-400 hover:bg-red-400"
-            onClick={() => onClose(false)}
+            onClick={() => setShowModal(false)}
           >
             ยกเลิก
           </button>
@@ -89,10 +87,11 @@ export default function ContentModalPost({ onClose }) {
   );
 }
 
-export const Input = ({ length, focus = false, value, setValue }) => {
+export const Input = ({id, length, focus = false, value, setValue }) => {
   return (
     <input
       type={"text"}
+      id={id}
       className=" block mx-auto w-16 border border-pink-300 text-center rounded-md outline-pink-400"
       pattern="[0-9]*"
       inputMode="numeric"

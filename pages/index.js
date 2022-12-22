@@ -8,15 +8,15 @@ import { getSession } from "next-auth/react";
 
 export default function Signin() {
   
-  const [lottoCurrent, setLottoCurrent] = useState(null)
+  // const [lottoCurrent, setLottoCurrent] = useState(null)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
 
-  useEffect(()=>{
-    setLottoCurrent(JSON.parse(localStorage.getItem("lottoCurrent")))
-  }, [])
+  // useEffect(()=>{
+  //   setLottoCurrent(JSON.parse(localStorage.getItem("lottoCurrent")))
+  // }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -30,9 +30,10 @@ export default function Signin() {
       setErrorMessage(null);
       switch (session.token.role) {
         case "admin":
-          lottoCurrent === null 
-            ? router.replace("/admin/lotto")
-            : router.replace("/admin/dashboard/");
+          // lottoCurrent === null 
+            // ? router.replace("/admin/lotto")
+            // : router.replace("/admin/dashboard/");
+          router.replace("/admin/lotto/");
           break;
         case "subadmin":
           router.replace("/subadmin/");
@@ -47,7 +48,6 @@ export default function Signin() {
       setErrorMessage(result.error);
     }
   };
-
 
   return (
     <form

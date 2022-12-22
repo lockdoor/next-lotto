@@ -10,10 +10,19 @@ import {
   getBetByForbiddenNumber
 } from "../../../lib/clientRequest/forbidden";
 import MyModal from "../../../components/myModal";
+import { useQuery } from "react-query";
 
-export default function ForbiddenTable({ forbidden }) {
+export default function ForbiddenTable({ lottoCurrent }) {
   const [showModal, setShowModal] = useState(false);
   const [selectForbidden, setSelectForbidden] = useState(null);
+
+  const {isError, isLoading, data, error} = useQuery(
+    ["getForbiddenByLottoDateId", lottoCurrent._id],
+    getForbiddenByLottoDateId
+  );
+
+  if (isLoading) return <div>ForBidden is Loading</div>;
+  if (isError) return <div>Got Error {error}</div>;
 
   const onClickForbiddenHandler = (e) => {
     setSelectForbidden(e);
@@ -22,20 +31,20 @@ export default function ForbiddenTable({ forbidden }) {
 
   return (
     <>
-      {forbidden ? (
+      {data ? (
         <div className=" md:flex">
           <Card
-            forbidden={forbidden.filter((e) => e.type == "A")}
+            forbidden={data.filter((e) => e.type == "A")}
             type="A"
             onClickForbiddenHandler={onClickForbiddenHandler}
           />
           <Card
-            forbidden={forbidden.filter((e) => e.type == "B")}
+            forbidden={data.filter((e) => e.type == "B")}
             type="B"
             onClickForbiddenHandler={onClickForbiddenHandler}
           />
           <Card
-            forbidden={forbidden.filter((e) => e.type == "C")}
+            forbidden={data.filter((e) => e.type == "C")}
             type="C"
             onClickForbiddenHandler={onClickForbiddenHandler}
           />
