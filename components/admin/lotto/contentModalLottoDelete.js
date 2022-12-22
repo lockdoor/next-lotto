@@ -2,12 +2,9 @@ import React, { useState } from 'react'
 import { deleteLotto, getLottos } from '../../../lib/clientRequest/lotto'
 import { useQueryClient, useMutation } from "react-query";
 import { formatDate } from '../../../lib/helper';
-import { getLottoCurrent } from '../../../lib/helper';
-
 
 export default function ContentModalLottoDelete({data, setShowModal}) {
 
-  const lottoCurrent = getLottoCurrent()
   const [errorMessage, setErrorMessage] = useState('')
   const queryClient = useQueryClient()
   const deleteMutation = useMutation(deleteLotto, {
@@ -26,10 +23,10 @@ export default function ContentModalLottoDelete({data, setShowModal}) {
 
   const onSubmitDeleteHandler = (e) => {
     e.preventDefault()
-    if(data._id === lottoCurrent._id){
-      setErrorMessage('ไม่สามารถลบงวดหวยที่กำลังใช้อยู่')
-      return
-    }
+    // if(data._id === lottoCurrent._id){
+    //   setErrorMessage('ไม่สามารถลบงวดหวยที่กำลังใช้อยู่')
+    //   return
+    // }
     deleteMutation.mutate(data._id)
   }
   return (

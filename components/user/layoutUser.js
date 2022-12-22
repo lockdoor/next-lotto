@@ -4,9 +4,9 @@ import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { getLottoCurrent, formatDate } from "../../lib/helper";
+import { formatDate } from "../../lib/helper";
 import Head from "next/head";
-export default function Layout({ title, children, actionIcon }) {
+export default function Layout({ title, children, actionIcon, lottoCurrent }) {
   const [drawerState, setDrawerState] = useState(false);
   const router = useRouter();
   const gotoPage = (page) => {
@@ -26,7 +26,7 @@ export default function Layout({ title, children, actionIcon }) {
 
         <div className="w-full text-center">
           <div>{title}</div>
-          <LottoDate />
+          {/* <LottoDate /> */}
         </div>
 
         <div className=" justify-self-end mr-5 text-5xl cursor-pointer">{actionIcon}</div>
@@ -85,8 +85,8 @@ export default function Layout({ title, children, actionIcon }) {
   );
 }
 
-const LottoDate = () => {
-  const [lottoCurrent, setLottoCurrent] = useState(null)
-  useEffect(()=>{setLottoCurrent(getLottoCurrent())},[])
-  return <div>{lottoCurrent ? `${formatDate(lottoCurrent.date)}` : ""}</div>;
-};
+// const LottoDate = () => {
+//   const [lottoCurrent, setLottoCurrent] = useState(null)
+//   useEffect(()=>{setLottoCurrent(getLottoCurrent())},[])
+//   return <div>{lottoCurrent ? `${formatDate(lottoCurrent.date)}` : ""}</div>;
+// };

@@ -15,7 +15,7 @@ export default function ReportPage({lottoCurrent}) {
     router.push(`/admin/report/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
   }, [])
   const { isLoading, isError, data, error } = useQuery(
-    ["getAllBetsGroupNumberTotalPrice", lotto?._id],
+    ["getAllBetsGroupNumberTotalPrice", lotto._id],
     getAllBetsGroupNumberTotalPrice
   );
 
@@ -29,7 +29,7 @@ export default function ReportPage({lottoCurrent}) {
       <main>
         {/* <div>ReportPage</div> */}
         <TotalPrice data={data} />
-        <Summarize data={data}/>
+        <Summarize data={data} lottoCurrent={lotto} />
       </main>
     </Layout>
     

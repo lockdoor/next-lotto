@@ -14,7 +14,7 @@ export default function UsersPage({lottoCurrent}) {
   const lotto = JSON.parse(lottoCurrent)
   const router = useRouter()
   useEffect(() => {
-    router.push(`/admin/dashboard/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
+    router.push(`/admin/user/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
   }, [])
 
   const formCreateUserState = useSelector(state=>state.user.formCreateUserState)

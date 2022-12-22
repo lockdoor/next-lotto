@@ -53,7 +53,7 @@ export default function BetTable({lottoCurrent}) {
               <div className="flex flex-row justify-around">
                 <div className=" flex-1 text-center border-r-2 border-green-300">
                   <Link
-                    href={`../admin/users/betDetail/${e.date._id}/${e.user._id}/${e.user.nickname}`}
+                    href={`../user/betDetail/${e.date._id}/${e.user._id}`}
                   >
                     {e.user.nickname}
                   </Link>

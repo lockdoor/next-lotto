@@ -102,7 +102,7 @@ function Card({ data, lottoDateId }) {
           ยอดรวม:{" "}
           {total != 0 ? (
             <Link
-              href={`../admin/user/betDetail/${lottoDateId}/${_id}/${nickname}`}
+              href={`../user/betDetail/${lottoDateId}/${_id}`}
               prefetch={false}
             >
               <span className="text-green-600">{total}</span>
@@ -115,3 +115,4 @@ function Card({ data, lottoDateId }) {
     </div>
   );
 }
+

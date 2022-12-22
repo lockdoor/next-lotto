@@ -14,7 +14,7 @@ export default function Forbidden({lottoCurrent}) {
   const lotto = JSON.parse(lottoCurrent)
   const router = useRouter()
   useEffect(() => {
-    router.push(`/admin/bet/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
+    router.push(`/admin/forbidden/${dateToInputValue(lotto.date)}`, undefined , {shallow: true})
   }, [])
 
   const {isError, isLoading, data, error} = useQuery(

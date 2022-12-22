@@ -1,12 +1,11 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { getNumberDetail } from "../../../lib/clientRequest/report";
-import { translateType, getLottoCurrent } from "../../../lib/helper";
+import { translateType} from "../../../lib/helper";
+import Link from "next/link";
 
-// import Link from "next/link";
-
-export default function ContentModalShowNumberDetail({bet}) {
-  const lottoCurrent = getLottoCurrent()
+export default function ContentModalShowNumberDetail({bet, lottoCurrent}) {
+  // const lottoCurrent = getLottoCurrent()
   const { isLoading, isError, data, error } = useQuery(
     ["getNumberDetail", lottoCurrent._id, bet._id.type, bet._id.numberString],
     getNumberDetail
@@ -29,7 +28,12 @@ export default function ContentModalShowNumberDetail({bet}) {
           <div className=" w-2/3 mx-auto">
             {data.map((e, i) => (
               <div key={i} className="flex flex-row justify-between">
-                {/* <span><Link href={`../admin/users/betDetail/${lottoDateId}/${e.user._id}/${e.user.nickname}`}>{e.user.nickname}</Link></span> <span>=</span>{" "} */}
+                <span>
+                  <Link href={`../user/betDetail/${lottoCurrent._id}/${e.user._id}`}>
+                    {e.user.nickname}
+                  </Link>
+                </span>
+                <span>=</span>
                 <span>{e.price}</span>
               </div>
             ))}

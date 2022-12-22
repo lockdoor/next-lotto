@@ -32,7 +32,7 @@ export default function Layout({ title, children, actionIcon, lottoCurrent }) {
         <div className="w-full text-center">
           <div>{title}</div>
           {/* <LottoDate /> */}
-          <div>{formatDate(lottoCurrent.date)}</div>
+          {lottoCurrent && <div>{formatDate(lottoCurrent.date)}</div>}
         </div>
 
         <div className=" justify-self-end mr-5 text-5xl cursor-pointer">{actionIcon}</div>

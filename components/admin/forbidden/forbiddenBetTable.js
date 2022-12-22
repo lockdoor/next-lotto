@@ -11,13 +11,14 @@ import {
 } from "../../../lib/clientRequest/forbidden";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import MyModal from "../../myModal";
+import Link from "next/link";
 
 export default function ForbiddenBetTable({ lottoCurrent }) {
 
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [selectBet, setSelectBet] = useState(null);
     const { isLoading, isError, data, error } = useQuery(
-    ["getBetByForbiddenNumber", lottoCurrent?._id],
+    ["getBetByForbiddenNumber", lottoCurrent._id],
     getBetByForbiddenNumber
   );
 
@@ -63,7 +64,9 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
                     <td className="py-2 pl-3 w-14">{e.numberString}</td>
                     <td className="py-2 text-end pr-3 w-16">{e.price}</td>
                     <td className="py-2 pl-3 w-20">{translateType(e.type)}</td>
-                    <td className="py-2 pl-3">{e.user.nickname}</td>
+                    <td className="py-2 pl-3">
+                      <Link href={`../user/betDetail/${lottoCurrent._id}/${e.user._id}`}>{e.user.nickname}</Link>
+                    </td>
                     <td className="py-2 w-20 text-center">
                       <RiDeleteBin2Line
                         className=" inline-block text-red-500 text-lg cursor-pointer"

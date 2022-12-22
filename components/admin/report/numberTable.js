@@ -4,7 +4,7 @@ import { translateType, useOutsideAlerter } from "../../../lib/helper";
 import MyModal from "../../../components/myModal";
 import ContentModalShowNumberDetail from "./contentModalShowNumberDetail";
 
-export default function NumberTable({ type, data }) {
+export default function NumberTable({ type, data, lottoCurrent }) {
   const [showSort, setShowSort] = useState(false);
   const [tableData, setTableData] = useState(data.filter(e => e._id.type === type));
   const [showModal, setShowModal] = useState(false);
@@ -113,7 +113,7 @@ export default function NumberTable({ type, data }) {
       ))}
            
       <MyModal isOpen={showModal} setShowModal={setShowModal}>
-        <ContentModalShowNumberDetail bet={selectBet} />
+        <ContentModalShowNumberDetail bet={selectBet} lottoCurrent={lottoCurrent}/>
       </MyModal>
      
     </div>
