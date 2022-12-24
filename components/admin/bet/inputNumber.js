@@ -26,6 +26,7 @@ export default function InputNumber({numberString, setNumberString, numberLength
         <input
           type={"number"}
           className="input-bet-number text-right"
+          id="upPrice"
           value={upPrice}
           pattern="[0-9]*"
           inputMode="numeric"
@@ -38,6 +39,7 @@ export default function InputNumber({numberString, setNumberString, numberLength
         <input
           type={"number"}
           className="input-bet-number text-right"
+          id="downPrice"
           value={downPrice}
           pattern="[0-9]*"
           inputMode="numeric"
@@ -51,6 +53,7 @@ export default function InputNumber({numberString, setNumberString, numberLength
           <input
             type={"number"}
             className="input-bet-number text-right"
+            id="subsetPrice"
             value={subsetPrice}
             pattern="[0-9]*"
             inputMode="numeric"

@@ -33,7 +33,12 @@ export default function WinnerTable({ lottoCurrent }) {
                 return (
                   <tr key={index} className={`${index % 2 == 0 ? "bg-blue-50" : "bg-blue-100"}`}>
                     <td className="py-2 w-14 text-center">{e.numberString}</td>
-                    <td className="py-2 text-center ">{e.user.nickname}</td>
+                    <td className="py-2 text-center ">
+                      <Link href={`../user/betDetail/${lottoCurrent._id}/${e.user._id}`}>
+                        {e.user.nickname}
+                      </Link>
+                      
+                    </td>
                     <td className="py-2 pr-3 w-20 text-center">{e.price}</td>
                     <td className="py-2 text-center">{e.recorder.nickname}</td>
                   </tr>

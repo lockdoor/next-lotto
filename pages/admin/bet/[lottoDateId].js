@@ -63,6 +63,10 @@ export default function Bet({lottoCurrent}) {
 
   const onSubmitHandle = (e) => {
     e.preventDefault();
+    if (!userId) {
+      setErrorMessage("กรุณาเลือกลูกค้าจากรายชื่อ");
+      return;
+    }
     const recorder = session.token._id;
     const lottoDateId = data._id;
     const numbers = betSubmit(
@@ -73,9 +77,10 @@ export default function Bet({lottoCurrent}) {
       numberString,
       upPrice,
       downPrice,
-      subsetPrice
+      subsetPrice,
+      setErrorMessage     
     );
-    if (numbers.length === 0) {
+    if (!numbers?.length) {
       setErrorMessage("กรุณากรอกข้อมูลให้ถูกต้อง");
       return;
     }
@@ -102,6 +107,7 @@ export default function Bet({lottoCurrent}) {
                 setUser={setUser}
                 user={user}
                 setUserId={setUserId}
+                // errorMessage={errorMessage}
               />
 
               {/* radio button */}

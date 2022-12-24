@@ -47,7 +47,7 @@ body {
 }
 
 .input-formCreateCustomer{
-  @apply block border border-green-400 focus:outline-none text-center w-full py-2 my-3 rounded-md
+  @apply block border border-green-400 focus:outline-none text-center w-full py-2 my-3 rounded-md disabled:bg-inherit disabled:border-none
 }
 
 .input-bet-number {

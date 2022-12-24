@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 export default function Autocomplete({user, setUser, setUserId}) {
   const [showOption, setShowOption] = useState(false);
   const [options, setOptions] = useState([]);
-
   const router = useRouter();
 
   const { isLoading, isError, data, error } = useQuery("getUsers", getUsers);
@@ -21,14 +20,27 @@ export default function Autocomplete({user, setUser, setUserId}) {
 
   const onChangeHandler = (e) => {
     setOptions(filter(e.target.value));
-    setUserId('')
     setUser(e.target.value)
   };
 
   const onSelectUser = (nickname, _id) =>{
     setUser(nickname)
-    // console.log(_id)
     setUserId(_id)
+  }
+
+  const onKeyDownHandler = (e) => {
+    // e.preventDefault()
+    if(e.key === 'Tab' || e.key === 'Enter'){
+      // alert(options[0]._id)
+      if(options.length){
+        setUser(options[0].nickname)
+        setUserId(options[0]._id)
+        setShowOption(false)
+      }else{
+        setUser('')
+        setUserId('')
+      }
+    }
   }
 
   const gotoUserPage = () => {
@@ -47,11 +59,14 @@ export default function Autocomplete({user, setUser, setUserId}) {
 
   return (
     <div className=" relative w-80 mx-auto mt-3">
+      {/* <div className="text-error-message">{errorMessage}</div> */}
       <input
+        id='auto-complete'
         placeholder="เลือกลูกค้า"
         onFocus={onFocusHandler}
         onBlur={() => setShowOption(false)}
         onChange={onChangeHandler}
+        onKeyDown={onKeyDownHandler}
         value={user}
         required
         className=" w-full block mx-auto px-3 py-2 border border-green-300 rounded outline-green-400"

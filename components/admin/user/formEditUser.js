@@ -6,19 +6,17 @@ import {
 import { useQueryClient, useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { closeFormEditUser } from "../../../redux/userSlice";
-// import { getLottoCurrent } from "../../../lib/helper";
 
 export default function FormEditUser({ user, lottoCurrent }) {
-  // console.log(userId);
-  // const lottoCurrent = getLottoCurrent();
+  console.log("user is, ", user)
   const [nickname, setNickname] = useState(user.nickname);
   const [discount, setDiscount] = useState(user.discount);
-  const [username, setUsername] = useState(user.username);
+  const [username, setUsername] = useState(user.username || '');
   const [password, setPassword] = useState("");
   const [credit, setCredit] = useState(user.credit)
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const [checkForCreateLoginAccount, setCheckForCreateLoginAccount] =
-    useState(false);
+    useState(user.username ? true : false);
 
   const queryClient = useQueryClient();
   const dispatch = useDispatch()
@@ -112,6 +110,7 @@ export default function FormEditUser({ user, lottoCurrent }) {
               onChange={onChangeCheckBox}
               id="checkForCreateLoginAccount"
               className="accent-green-400 mr-3"
+              disabled={user.role === 'admin'}
             />
             <label htmlFor="checkForCreateLoginAccount">
               อณุญาติให้ลูกค้าเข้าสู่ระบบ หรือแก้ไขรหัสผ่าน

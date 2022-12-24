@@ -68,7 +68,6 @@ function Card({ data, lottoDateId }) {
   const {nickname, discount, role, username, total, _id} = data
   const dispatch = useDispatch();
   const onClickEditHandler = () => {
-    // console.log('edit ', _id)
     dispatch(selectUser(data));
     dispatch(toggleFormEditUser());
   }
