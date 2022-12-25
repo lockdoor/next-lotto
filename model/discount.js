@@ -1,9 +1,10 @@
 import mongoose, { Schema, models, model } from 'mongoose'
 
 const DiscountSchema = new Schema({
-  date: {type: mongoose.Types.ObjectId, ref: 'Lotto', required: true},
+  lottoDateId: {type: mongoose.Types.ObjectId, ref: 'Lotto', required: true},
   user: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
-  discount: {type: Number, required: true, default: 0}  
+  discount: {type: Number, required: true, default: 0},
+  date: {type: Date, require: true}
 },{
   timestamps: true
 })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getUsersWithTotalBetByLottoDateId } from "../../../lib/clientRequest/user";
 import { useQuery } from "react-query";
 import { FaChessKnight, FaChessQueen, FaChessPawn } from "react-icons/fa";
@@ -7,11 +7,12 @@ import { RiEdit2Line } from "react-icons/ri";
 import { MdPersonSearch } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { toggleFormEditUser, selectUser } from "../../../redux/userSlice";
+import Payment from "./payment";
+import { numberWithCommas } from "../../../lib/helper";
 
-
-export default function UsersTable({lottoCurrent}) {
+export default function UsersTable({ lottoCurrent }) {
   const [userData, setUserData] = useState(null);
-  const [userSearch, setUserSearch] = useState(""); 
+  const [userSearch, setUserSearch] = useState("");
   const { isLoading, isError, data, error } = useQuery(
     ["getUsersWithTotalBetByLottoDateId", lottoCurrent._id],
     getUsersWithTotalBetByLottoDateId,
@@ -36,6 +37,8 @@ export default function UsersTable({lottoCurrent}) {
 
   if (isLoading) return <div>Users is Loading</div>;
   if (isError) return <div>Got Error {error}</div>;
+
+  // console.log(data)
 
   return (
     <>
@@ -65,53 +68,79 @@ export default function UsersTable({lottoCurrent}) {
 }
 
 function Card({ data, lottoDateId }) {
-  const {nickname, discount, role, username, total, _id} = data
+  const { nickname, discount, role, username, total, _id, payment } = data;
+  const [errorMessage, setErrorMessage] = useState('')
   const dispatch = useDispatch();
   const onClickEditHandler = () => {
     dispatch(selectUser(data));
     dispatch(toggleFormEditUser());
-  }
+  };
 
   return (
-    <div className=" border-2 border-pink-300 bg-white px-10 py-5 mx-3 rounded-md">
-      <div className="flex flex-row justify-between">
-        <p
-          onClick={onClickEditHandler}
-          className="cursor-pointer"
-        >
-          <span>
-            {role === "admin" ? (
-              <FaChessQueen className="inline" color="red" />
-            ) : role === "subadmin" ? (
-              <FaChessKnight className="inline" color="blue" />
-            ) : username ? (
-              <FaChessPawn className="inline" color="green" />
-            ) : (
-              "ชื่อ"
-            )}
-          </span>
-          {" : " + nickname + " "}
-          <RiEdit2Line className="inline" />
-        </p>
-        <p>ส่วนลด: {discount}</p>
-      </div>
-
-      <div className="flex flex-row justify-between">
-        <p>
-          ยอดรวม:{" "}
-          {total != 0 ? (
-            <Link
-              href={`../user/betDetail/${lottoDateId}/${_id}`}
-              prefetch={false}
-            >
-              <span className="text-green-600">{total}</span>
-            </Link>
-          ) : (
-            <span className="text-red-600">{total}</span>
+    <div className={`border-2 ${
+      total === 0 
+        ? 'border-gray-300 text-gray-300'
+        : payment?.isFinish 
+          ? 'border-green-300 text-green-500' 
+          : 'border-pink-300 text-pink-500'} 
+        bg-white px-5 py-5 mx-3 rounded-md`} >
+      {errorMessage && <div className="text-error-message">{errorMessage}</div>}
+      <div className=" min-[500px]:flex">
+        <div className="flex-1">
+          <Name onClickEditHandler={onClickEditHandler} {...data} />
+          <Total {...data} lottoDateId={lottoDateId} />
+        </div>
+        <div className="flex-1">
+          {!(discount === 0 || !discount) && (
+            <p>
+              ส่วนลด: {discount}% ={" "}
+              {numberWithCommas(total - (total * discount) / 100)}
+            </p>
           )}
-        </p>
+          <div>
+            <span className="">ยอดชำระ: </span>
+            <Payment userData={data} lottoDateId={lottoDateId} setErrorMessage={setErrorMessage}/>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
+const Name = ({ onClickEditHandler, role, nickname, username }) => {
+  return (
+    <p>
+      <span>
+        {role === "admin" ? (
+          <FaChessQueen className="inline" color="red" />
+        ) : role === "subadmin" ? (
+          <FaChessKnight className="inline" color="blue" />
+        ) : username ? (
+          <FaChessPawn className="inline" color="green" />
+        ) : (
+          "ชื่อ"
+        )}
+      </span>
+      {" : " + nickname + " "}
+      <RiEdit2Line
+        className="inline cursor-pointer"
+        onClick={onClickEditHandler}
+      />
+    </p>
+  );
+};
+
+const Total = ({ lottoDateId, total, _id }) => {
+  return (
+    <p>
+      ยอดรวม:{" "}
+      {total != 0 ? (
+        <Link href={`../user/betDetail/${lottoDateId}/${_id}`} prefetch={false}>
+          <span>{numberWithCommas(total)}</span>
+        </Link>
+      ) : (
+        <span>{total}</span>
+      )}
+    </p>
+  );
+};
