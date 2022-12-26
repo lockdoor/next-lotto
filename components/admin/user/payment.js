@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 // input text only digit with comma
 export default function Payment({userData, lottoDateId, setErrorMessage}) {
-  // console.log(lottoDateId)
+  const {total, payment, winPrice} = userData
   const { data: session } = useSession();
   const[input, setInput] = useState(numberWithCommas(userData.payment?.payment) || '')
   const queryClient = useQueryClient()
@@ -86,7 +86,15 @@ export default function Payment({userData, lottoDateId, setErrorMessage}) {
       value={input}
       onChange={onChangeHandle}
       onBlur={onBlurHandler}
-      className={`max-w-[96px] border-b-2 ${userData.payment?.isFinish ? 'border-green-300' : 'border-pink-300'} text-start outline-none px-2`}
+      // className={`max-w-[96px] border-b-2 ${userData.payment?.isFinish ? 'border-green-300' : 'border-pink-300'} text-start outline-none px-2`}
+      className={`max-w-[96px] border-b-2 } ${
+        total === 0 
+          ? 'border-gray-300 text-gray-300'
+          : payment?.isFinish 
+            ? 'border-green-300 text-green-500' 
+            : (total - winPrice) < 0
+              ? 'border-blue-300 text-blue-500' 
+              : 'border-pink-300 text-pink-500'} text-start outline-none px-2`}
     />   
   )
 }

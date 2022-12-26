@@ -56,7 +56,7 @@ export default function UsersTable({ lottoCurrent }) {
         {userData?.length ? (
           userData.map((data, index) => {
             return (
-              <Card data={data} key={index} lottoDateId={lottoCurrent._id} />
+              <Card data={data} key={data._id} lottoDateId={lottoCurrent._id} />
             );
           })
         ) : (
@@ -68,7 +68,7 @@ export default function UsersTable({ lottoCurrent }) {
 }
 
 function Card({ data, lottoDateId }) {
-  const { nickname, discount, role, username, total, _id, payment } = data;
+  const { nickname, discount, role, username, total, _id, payment, winPrice } = data;
   const [errorMessage, setErrorMessage] = useState('')
   const dispatch = useDispatch();
   const onClickEditHandler = () => {
@@ -82,25 +82,29 @@ function Card({ data, lottoDateId }) {
         ? 'border-gray-300 text-gray-300'
         : payment?.isFinish 
           ? 'border-green-300 text-green-500' 
-          : 'border-pink-300 text-pink-500'} 
+          : (total - winPrice) < 0
+            ? 'border-blue-300 text-blue-500' 
+            : 'border-pink-300 text-pink-500'} 
         bg-white px-5 py-5 mx-3 rounded-md`} >
       {errorMessage && <div className="text-error-message">{errorMessage}</div>}
       <div className=" min-[500px]:flex">
         <div className="flex-1">
           <Name onClickEditHandler={onClickEditHandler} {...data} />
           <Total {...data} lottoDateId={lottoDateId} />
+          <WinPrice winPrice={winPrice} />
         </div>
         <div className="flex-1">
           {!(discount === 0 || !discount) && (
             <p>
               ส่วนลด: {discount}% ={" "}
-              {numberWithCommas(total - (total * discount) / 100)}
+              {numberWithCommas(total * discount / 100)}
             </p>
           )}
-          <div>
+          <p>สรุปยอด: {total - (total * (discount || 0) / 100) - (winPrice || 0)}</p>
+          {(total - winPrice) > 0 && <div>
             <span className="">ยอดชำระ: </span>
             <Payment userData={data} lottoDateId={lottoDateId} setErrorMessage={setErrorMessage}/>
-          </div>
+          </div>}
         </div>
       </div>
     </div>
@@ -144,3 +148,14 @@ const Total = ({ lottoDateId, total, _id }) => {
     </p>
   );
 };
+
+const WinPrice = ({winPrice}) => {
+  return(
+    <>
+      {winPrice ? (
+        <p>ยอดถูกรางวัล: {winPrice}</p>) 
+        :(<></>)}
+    </>
+    
+  )
+}

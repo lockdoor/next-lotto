@@ -44,4 +44,4 @@ export default function UsersPage({lottoCurrent}) {
 }
 export const getServerSideProps = async (context) => getLottoCurrent(context)
 
-// const names = ["แดง ไบเล่ห์","ปุ๊ ระเบิดขวด","ดำ เอสโซ่","จอร์จ ฮาวดี้","จ่าดับ จำเปาะ","เหมาะ เชิงมวย","ตังกวย แซ่ลี้","จุก เบี้ยวสกุล","หมัด เชิงมวย","อัคคี เมฆยันต์","ดั่น มหิทธา","กล้า ตะลุมพุก"]
+
