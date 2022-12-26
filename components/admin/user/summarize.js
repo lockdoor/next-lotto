@@ -19,7 +19,7 @@ export default function Summarize({ data }) {
 
   return (
     <>
-      <div className="flex flex-row justify-around flex-wrap px-5 py-3 mx-3 gap-3 border border-green-300 rounded-md">
+      <div className="flex flex-row justify-around flex-wrap p-3 my-3 gap-3 border border-green-300 rounded-md bg-white">
         <CheckboxType type="up3" checked={showUp3} setChecked={setShowUp3} />
         <CheckboxType type="set3up" checked={showSet3up} setChecked={setShowSet3up} />
         <CheckboxType type="down3" checked={showDown3} setChecked={setShowDown3} />

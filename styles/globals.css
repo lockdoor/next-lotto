@@ -67,7 +67,7 @@ body {
 }
 
 .globals-table{
-  @apply w-full mx-auto my-10
+  @apply w-full mx-auto
 }
 
 .globals-table > caption {
@@ -75,7 +75,7 @@ body {
 }
 
 .globals-table th{
-  @apply py-2 bg-blue-300
+  @apply py-2 bg-blue-400 text-white border border-gray-50
 }
 
 /* .globals-table-td{

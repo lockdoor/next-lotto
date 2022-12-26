@@ -30,9 +30,16 @@ export default function UserBetWithLottoDateId({lotto, user}) {
 
   return (
     <Layout title={userCurrent.nickname} lottoCurrent={lottoCurrent}>
-      <TotalPrice data={data}/>
-      <Conclusion lottoCurrent={lottoCurrent} userCurrent={userCurrent}/>
+      <main className='px-5'>
+      
+      <div className='border border-green-300 my-5 p-3 rounded-lg bg-white'>
+        <TotalPrice data={data}/>
+        <Conclusion lottoCurrent={lottoCurrent} userCurrent={userCurrent}/>
+      </div>
+      
       <Summarize data={data}/>
+      </main>
+      
     </Layout>
   )
 }
