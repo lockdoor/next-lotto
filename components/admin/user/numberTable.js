@@ -3,6 +3,7 @@ import { FaSort, FaAngleUp, FaAngleDown } from "react-icons/fa";
 import { translateType, useOutsideAlerter } from "../../../lib/helper";
 import MyModal from "../../../components/myModal";
 import ContentModalEdit from "../bet/contentModalEdit";
+import NumberDetailTable from "../numberDetailTable";
 
 export default function NumberTable({ type, data }) {
   // console.log(data)
@@ -57,10 +58,22 @@ export default function NumberTable({ type, data }) {
 
   // console.log(tableData);
   return (
-    <div className="border border-pink-300 py-2 px-1 mt-3 rounded-md flex-1 text-center w-2/3 mx-auto">
+    <div 
+      className="w-full"
+      // className="border border-pink-300 py-2 px-1 mt-3 rounded-md flex-1 text-center w-2/3 mx-auto"
+      >
       
-      {/* header */}
-      <div>
+      <NumberDetailTable 
+        sortByKey={sortByKey}
+        onClickNumberHandler={onClickNumberHandler}
+        tableData={tableData}
+        setTableData={setTableData}
+        type={type}
+        setShowSort={setShowSort}
+        showSort={showSort}
+      />
+
+      {/* <div>
         <span>{translateType(type)}</span>
         <FaSort
           className="inline cursor-pointer"
@@ -68,7 +81,8 @@ export default function NumberTable({ type, data }) {
         />
       </div>
 
-      {/* show sorting */}
+
+
       {showSort && (
         <ul
           className=" relative border border-pink-300 rounded-md bg-white p-3"
@@ -101,10 +115,10 @@ export default function NumberTable({ type, data }) {
         </ul>
       )}
 
-      {/* show summery for report page */}
+
       <div>จำนวนเลขทั้งหมด {tableData.length}</div>
       
-      {/* table */}
+
       {tableData.map((e, i) => (
         <div
           key={i}
@@ -115,7 +129,7 @@ export default function NumberTable({ type, data }) {
           <div className="flex-1">=</div>
           <div className="flex-1 text-end">{e.price}</div>
         </div>
-      ))}
+      ))} */}
            
       <MyModal isOpen={showModal} setShowModal={setShowModal}>
         <ContentModalEdit bet={selectBet} setShowModal={setShowModal} page={'user'}/>

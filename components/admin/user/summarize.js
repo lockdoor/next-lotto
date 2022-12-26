@@ -1,5 +1,5 @@
 // สรุปรวมตัวเลขแต่ละตัวพร้อมราคา
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NumberTable from "./numberTable";
 import CheckboxType from "../../../components/admin/report/checkboxType";
 
@@ -9,7 +9,6 @@ const checked = (data, type) => {
 }
 
 export default function Summarize({ data }) {
-  console.log(data)
   const [showUp3, setShowUp3] = useState(checked(data, "up3"));
   const [showDown3, setShowDown3] = useState(checked(data, "set3up"));
   const [showSet3up, setShowSet3up] = useState(checked(data, "down3"));

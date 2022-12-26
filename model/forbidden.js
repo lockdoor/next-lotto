@@ -3,7 +3,7 @@ import mongoose, { Schema, models, model } from 'mongoose'
 const ForbiddenSchema = new Schema({
   date: {type: mongoose.Types.ObjectId, ref: 'Lotto', required: true},
   type: {type: String, enum: ['A', 'B', 'C'], required: true},
-  numberString: {type: String, required: true},
+  numberString: {type: String, required: true, unique: true},
   isMain: {type: Boolean, required: true, default: false},
   set: {type: String, required: true}
 },{

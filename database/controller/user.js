@@ -4,6 +4,7 @@ import Bet from "../../model/bet";
 import Discount from "../../model/discount";
 import Lotto from "../../model/lotto";
 import Payment from "../../model/payment";
+import Win from "../../model/win";
 import validateUser from "../../lib/validateUser";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 import bcrypt from "bcrypt";
@@ -388,6 +389,46 @@ export async function getUserById(req, res) {
     console.log("error by catch controller getUserById");
     responseError(res, 400, "error by catch controller getUserById");
   }
+}
+
+export async function getConclusion(req, res) {
+  console.log('getConclusion work ', req.query.params)
+  const [lottoDateId, userId] = req.query.params
+  try{
+    const win = await Win.findOne({date: lottoDateId})
+    if(!win){
+      res.status(200).json(win)
+      return
+    }else{
+      const up3 = win.first.slice(3)
+      const set3up = up3.split("").sort((a,b) => a-b).join("")
+      const down3 = [win.first3_1, win.first3_2, win.last3_1, win.last3_2]
+      const up2 = win.first.slice(4)
+      const down2 = win.last2
+      const uprun = up3.split('')
+      const downrun = down2.split('')
+      // const lotto = await Lotto.findById(lottoDateId)
+      // const total = await getUserTotalBetPrice(userId, lottoDateId)
+      // const discount = await getUserDisCount(userId, lotto)
+      const userWin = await Bet.find({ $or: [
+        {user: userId, date: lottoDateId, type: "up3", numberString: up3},
+        {user: userId, date: lottoDateId, type: "set3up", numberString: set3up},
+        {user: userId, date: lottoDateId, type: "down3", numberString: down3},
+        {user: userId, date: lottoDateId, type: "up2", numberString: up2},
+        {user: userId, date: lottoDateId, type: "down2", numberString: down2},
+        {user: userId, date: lottoDateId, type: "uprun", numberString: uprun},
+        {user: userId, date: lottoDateId, type: "downrun", numberString: downrun},
+
+      ]})
+        console.log('win is ', userWin)
+        res.status(200).json(userWin)
+    }
+    
+  }
+ catch (error) {
+  console.log("error by catch controller getConclusion", error);
+  responseError(res, 400, "error by catch controller getConclusion");
+}
 }
 
 

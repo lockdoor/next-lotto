@@ -4,13 +4,13 @@ import NumberTable from "./numberTable";
 import CheckboxType from "./checkboxType";
 
 export default function Summarize({ data, lottoCurrent }) {
-  const [showUp3, setShowUp3] = useState(false);
-  const [showDown3, setShowDown3] = useState(false);
-  const [showSet3up, setShowSet3up] = useState(false);
-  const [showUp2, setShowUp2] = useState(false);
-  const [showDown2, setShowDown2] = useState(false);
-  const [showUprun, setShowUprun] = useState(false);
-  const [showDownrun, setShowDownrun] = useState(false);
+  const [showUp3, setShowUp3] = useState(true);
+  const [showDown3, setShowDown3] = useState(true);
+  const [showSet3up, setShowSet3up] = useState(true);
+  const [showUp2, setShowUp2] = useState(true);
+  const [showDown2, setShowDown2] = useState(true);
+  const [showUprun, setShowUprun] = useState(true);
+  const [showDownrun, setShowDownrun] = useState(true);
 
   // console.log(data)
 
@@ -25,7 +25,7 @@ export default function Summarize({ data, lottoCurrent }) {
         <CheckboxType type="uprun" checked={showUprun} setChecked={setShowUprun} />
         <CheckboxType type="downrun" checked={showDownrun} setChecked={setShowDownrun} />
       </div>
-      <div className="md:flex md:flex-row md:gap-2">
+      <div className="md:flex md:flex-row md:gap-2 px-5">
         {showUp3 && <NumberTable type="up3" data={data} lottoCurrent={lottoCurrent}/>}
         {showSet3up && <NumberTable type="set3up" data={data} lottoCurrent={lottoCurrent}/>}
         {showDown3 && <NumberTable type="down3" data={data} lottoCurrent={lottoCurrent}/>}

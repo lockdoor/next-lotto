@@ -6,10 +6,11 @@ import { responseError, responseSuccess } from "../../lib/responseJson";
 
 export async function postLotto(req, res){
   console.log('form database controller postLotto ', req.body)
+  const {date, up3, down3, set3up, down2, up2, uprun, downrun} = req.body
     try{
       await connectDB()
-      const date = new Date(req.body.date)
-      const result = await Lotto.create({date})
+      // const date = new Date(req.body.date)
+      const result = await Lotto.create({date: new Date(date), up3, down3, set3up, down2, up2, uprun, downrun})
       // console.log(result)
       responseSuccess(res, 201, 'create lotto success')
     }
@@ -39,10 +40,10 @@ export async function getLottos(req, res){
 
 export async function putLottoDate(req, res){
     try {
-      const {_id, date} = req.body
+      const {_id, date, up3, down3, set3up, down2, up2, uprun, downrun} = req.body
       console.log('from putLottoDate ',{_id, date} )
       await connectDB();
-      const lotto = await Lotto.updateOne({_id: _id}, {date: new Date(date)})
+      const lotto = await Lotto.updateOne({_id: _id}, {date: new Date(date), up3, down3, set3up, down2, up2, uprun, downrun})
       responseSuccess(res, 201, 'update date success')
     } catch (error) {
       console.log("error by catch controller putLottoDate", error);

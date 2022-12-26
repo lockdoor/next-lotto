@@ -10,6 +10,7 @@ import User from '../../../../model/user'
 import { useRouter } from 'next/router';
 import { dateToInputValue } from '../../../../lib/helper';
 import mongoose from 'mongoose';
+import Conclusion from '../../../../components/admin/user/conclusion';
 
 export default function UserBetWithLottoDateId({lotto, user}) {
 
@@ -30,6 +31,7 @@ export default function UserBetWithLottoDateId({lotto, user}) {
   return (
     <Layout title={userCurrent.nickname} lottoCurrent={lottoCurrent}>
       <TotalPrice data={data}/>
+      <Conclusion lottoCurrent={lottoCurrent} userCurrent={userCurrent}/>
       <Summarize data={data}/>
     </Layout>
   )

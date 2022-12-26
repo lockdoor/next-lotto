@@ -32,13 +32,14 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
   if (isError) return <div>Got Error {error}</div>;
 
   return (
-    <div className="px-5">
+    // <div className="px-5 lg:columns-3 lg:gap-8">
+    <div className="px-5 md:grid md:grid-cols-2 xl:grid-cols-3 gap-3 mt-10">
       {data.forbidden.map((forbidden) => {
-        if (!forbidden.bet.length) return <div key={forbidden._id}></div>;
+        if (!forbidden.bet.length) return <span key={forbidden._id} className='hidden'></span>;
         return (
           <table key={forbidden._id} className="globals-table">
             <caption
-              className={`text-2xl text-${textColorByForbiddenType(
+              className={`${textColorByForbiddenType(
                 forbidden.type
               )}`}
             >
@@ -47,11 +48,11 @@ export default function ForbiddenBetTable({ lottoCurrent }) {
             </caption>
             <thead>
               <tr>
-                <th className="globals-table-th">เลข</th>
-                <th className="globals-table-th">ราคา</th>
-                <th className="globals-table-th">ประเภท</th>
-                <th className="globals-table-th">ลูกค้า</th>
-                <th className="globals-table-th"></th>
+                <th>เลข</th>
+                <th>ราคา</th>
+                <th>ประเภท</th>
+                <th>ลูกค้า</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>

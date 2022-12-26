@@ -67,10 +67,14 @@ body {
 }
 
 .globals-table{
-  @apply w-full max-w-xl mx-auto my-10
+  @apply w-full mx-auto my-10
 }
 
-.globals-table-th{
+.globals-table > caption {
+  @apply text-2xl
+}
+
+.globals-table th{
   @apply py-2 bg-blue-300
 }
 

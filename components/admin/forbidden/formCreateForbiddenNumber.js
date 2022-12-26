@@ -10,7 +10,6 @@ import {
 import { useQueryClient, useMutation } from "react-query";
 
 export default function FormCreateForbiddenNumber({lottoCurrent}) {
-  // const lottoCurrent = getLottoCurrent();
   const [numberLength, setNumberLength] = useState(2);
   const [numberString, setNumberString] = useState("");
   const [type, setType] = useState("A");
