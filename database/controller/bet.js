@@ -2,16 +2,18 @@ import connectDB from "../connectDB";
 import Bet from "../../model/bet";
 import Lotto from "../../model/lotto"
 import User from "../../model/user";
+import Discount from "../../model/discount";
 import { responseError, responseSuccess } from "../../lib/responseJson";
+import { getUserDisCount, getUserTotalBetPrice } from "./helper";
 
 export async function postBet(req, res) {
   console.log('form database controller postBet ', req.body)
   
     try {
-      const lottoDataId = req.body[0].date
+      const lottoDateId = req.body[0].date
 
       await connectDB();
-      const lotto = await Lotto.findById(lottoDataId)
+      const lotto = await Lotto.findById(lottoDateId)
       if(lotto.isOpen){
         // console.log(lotto)
         const result = await Bet.insertMany(req.body);
@@ -33,12 +35,6 @@ export async function getBetsLasted20(req, res) {
   console.log('form database controller getBetsLasted20 ')
     try {
       await connectDB();
-      // const result = await Bet.find()
-      //   .populate({ path: "date", select: "date" }) 
-      //   .populate({ path: "user", select: "nickname" })
-      //   .populate({ path: "recorder", select: "nickname" })
-      //   .sort({ updatedAt: -1 })
-      //   .limit(20);
       const result = await Bet.aggregate([
         {
           $lookup: {
@@ -146,34 +142,84 @@ export async function putBet(req, res){
     }
 }
 
-// export async function getBetByTypeAndLottoDateIdAndSumPrice(req, res){
-//   // console.log(req.query)
-//   const [type, date] = req.query.params
-//   // console.log({type, date})
-//   const token = await getToken({ req });
-//   if (token.role === "admin") {
-//     try {
-//       await connectDB();
-//       // const result = await Bet.find({date, type})
-//       const result = await Bet.aggregate([
-//         {$match: {
-//           type, 
-//           $expr: { $eq: ["$date", { $toObjectId: date }] }
-//         }},
-//         {
-//           $group: { _id: "$numberString", total: {$sum: "$price"}}
-//         },{$sort: {_id: 1}}
-//       ])
+export async function postFreeBet(req, res){
+  console.log('postFreeBet work ', req.body)
+  const {user, date, recorder, isFree} = req.body[0]
+  if(!user || !date || !recorder || !isFree){
+    responseError(res, 400, 'required data')
+    return
+  }
+  try {
+    await connectDB()
+    const restOfFreeBetPrice = await getRestOfFreeBetPrice(user, date)
+    const totalPriceSend = req.body.reduce((a, b) => a + parseInt(b.price) , 0)
+    if(restOfFreeBetPrice - totalPriceSend < 0){
+      responseError(res, 400, `bet error your free bet is ${totalPriceSend}! free bet is remaining ${restOfFreeBetPrice}`)
+      return
+    }else{
+      const result = await Bet.insertMany(req.body)
+      res.status(201).json(result)
+    }
+  }
+  catch(error){
+    console.log("postFreeBet error by catch", error);
+    responseError(res, 400, "postFreeBet error by catch");
+  }
+}
 
-//       // console.log(result);
-//       // responseSuccess(res, 200, "delete bet success");
-//       res.status(200).json(result)
-//     } catch (error) {
-//       console.log("error by catch", error);
-//       responseError(res, 400, "error by catch");
-//     }
-//   } else {
-//     responseError(res, 403, "protect api by token");
-//   }
-// }
+export async function putFreeBet(req, res){
+  console.log('putFreeBet work ', req.body)
+  const {_id, newPrice, oldPrice, recorder, lottoDateId, userId} = req.body
+  try{
+    await connectDB()
+    
+    const restOfFreeBetPrice = await getRestOfFreeBetPrice(userId, lottoDateId)
+    if(newPrice > (restOfFreeBetPrice + oldPrice)){
+      responseError(res, 400, `bet error your free bet is ${newPrice}! free bet is remaining ${restOfFreeBetPrice + oldPrice}`)
+      return
+    }
+    else{
+      const result = await Bet.updateOne({_id}, {price: newPrice, recorder})
+      res.status(201).json(result)
+    }
+
+  }
+  catch(error){
+    console.log("putFreeBet error by catch", error);
+    responseError(res, 400, "putFreeBet error by catch");
+  }
+}
+
+export async function deleteFreeBet(req, res){
+  console.log('deleteFreeBet work ', req.body)
+  const { _id } = req.body
+  try{
+    await connectDB()
+    const result = await Bet.deleteOne({_id})
+    res.status(201).json(result)
+  }
+  catch(error){
+    console.log("deleteFreeBet error by catch", error);
+    responseError(res, 400, "deleteFreeBet error by catch");
+  }
+}
+
+async function getRestOfFreeBetPrice(userId, lottoDateId){
+  const lotto = await Lotto.findById(lottoDateId)
+  // หาเปอร์เซนต์ส่วนลด
+  const discount = await getUserDisCount(userId, lotto)
+  // หายอดรวมที่ลูกค้าแทงเข้ามา
+  const totalPrice = await getUserTotalBetPrice(userId, lottoDateId)
+  // หาราคาส่วนลด
+  const discountPrice = totalPrice * discount / 100
+  // หาราคาตัวฟรีทั้งหมดที่ซื้อไป
+  const totalFreeBetPrice = await getTotalFreeBetPrice(userId, lottoDateId)
+  const restOfFreeBetPrice = discountPrice - totalFreeBetPrice
+  return restOfFreeBetPrice
+}
+
+async function getTotalFreeBetPrice(userId, lottoDateId){
+  const result = await Bet.find({user: userId, date: lottoDateId, isFree: true})
+  return result.reduce((a,b) => a + b.price, 0)
+}
 

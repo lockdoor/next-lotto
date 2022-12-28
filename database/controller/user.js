@@ -5,9 +5,11 @@ import Discount from "../../model/discount";
 import Lotto from "../../model/lotto";
 import Payment from "../../model/payment";
 import Win from "../../model/win";
+import Forbidden from "../../model/forbidden"
 import validateUser from "../../lib/validateUser";
 import { responseError, responseSuccess } from "../../lib/responseJson";
 import bcrypt from "bcrypt";
+import { getUserDisCount, getUserTotalBetPrice } from "./helper";
 
 export async function postUser(req, res) {
   console.log("post user work ", req.body);
@@ -330,7 +332,7 @@ export async function getUserBetDetail(req, res) {
   // console.log({ lottoDateId, userId });
   try {
     await connectDB();
-    const result = await Bet.find({ date: lottoDateId, user: userId })
+    const result = await Bet.find({ date: lottoDateId, user: userId, isFree: false })
       .populate({ path: "user", select: "nickname" })
       .populate({ path: "recorder", select: "nickname" });
     // console.log(result);
@@ -390,6 +392,7 @@ export async function getConclusion(req, res) {
       const discount = await getUserDisCount(userId, lotto);
       const betWin = await Bet.aggregate([
         {
+          // user
           $lookup: {
             from: "users",
             localField: "recorder",
@@ -410,6 +413,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "up3"] },
                     { $eq: ["$numberString", up3] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -420,6 +424,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "set3up"] },
                     { $eq: ["$numberString", set3up] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -430,6 +435,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "down3"] },
                     { $in: ["$numberString", down3] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -440,6 +446,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "down2"] },
                     { $eq: ["$numberString", down2] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -450,6 +457,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "up2"] },
                     { $eq: ["$numberString", up2] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -460,6 +468,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "uprun"] },
                     { $in: ["$numberString", uprun] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
                 {
@@ -470,6 +479,7 @@ export async function getConclusion(req, res) {
                     },
                     { $eq: ["$type", "downrun"] },
                     { $in: ["$numberString", downrun] },
+                    // { $eq: ["$isFree", false]}
                   ],
                 },
               ],
@@ -482,12 +492,64 @@ export async function getConclusion(req, res) {
             type: 1,
             price: 1,
             numberString: 1,
+            isFree: 1
           },
         },
       ]);
-      const findWinPrice = (price, type) => {
-        return price * lotto[type];
+      const freeBet = discount 
+        ? await Bet.aggregate([
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'recorder',
+              foreignField: '_id',
+              as: 'recorder',
+              pipeline: [
+                {
+                  $project: {nickname: 1}
+                }
+              ]
+            }
+          },
+          {
+            $match: {$expr: {$and: [
+              {$eq: ['$date', {$toObjectId: lottoDateId}]},
+              {$eq: ['$user', {$toObjectId: userId}]},
+              {$eq: ['$isFree', true]},
+            ]}}
+          },
+          {
+            $project: {
+              recorder: {$first: '$recorder'},
+              numberString: 1,
+              price: 1,
+              type: 1,
+              isFree: 1
+            }
+          }
+        ])
+        : null
+      const forbidden = await Forbidden.find({date: lottoDateId})
+      // console.log(forbidden)
+      const winPrice = (price, type, numberString) => {
+        const forbiddenNumber = forbidden.find(e => e.numberString === numberString)
+        if(forbiddenNumber?.type === 'A'){
+          return price * lotto[type] / 2
+        }
+        else if(forbiddenNumber?.type === 'B'){
+          return 0
+        }
+        else if(forbiddenNumber?.type === 'C'){
+          return forbiddenNumber?.isMain ? 0 : price * lotto[type] / 2
+        }
+        else {
+          return price * lotto[type]
+        }
       };
+      const isForbidden = (numberString) => {
+        const result = forbidden.find(e => e.numberString === numberString)
+        return result ? true : false
+      }
       const totalWinPrice = (arr) => {
         return arr.reduce((a, b) => a + b.winPrice, 0);
       };
@@ -503,12 +565,16 @@ export async function getConclusion(req, res) {
           _id: e._id,
           type: e.type,
           price: e.price,
-          winPrice: findWinPrice(e.price, e.type),
+          isFree: e.isFree,
+          isForbidden: isForbidden(e.numberString),
+          winPrice: winPrice(e.price, e.type, e.numberString),
         })),
+        freeBet
       };
       result.totalWinPrice = totalWinPrice(result.numberWin);
+
       result.conclusion =
-        result.totalPrice - result.discountPrice - result.totalWinPrice;
+        result.totalPrice - result.discountPrice - result.totalWinPrice + (freeBet ? freeBet.reduce((a, b) => a + b.price, 0) : 0);
       // console.log("win is ", result);
       res.status(200).json(result);
     }
@@ -519,6 +585,7 @@ export async function getConclusion(req, res) {
 }
 
 function findWinPrice(win, bet, lotto) {
+  if(!win) return 0
   const up3 = win.first.slice(3);
   const set3up = up3
     .split("")
@@ -550,36 +617,4 @@ function findWinPrice(win, bet, lotto) {
   
 }
 
-//ใช้หาว่าลูกค้ามียอดรวมเท่าไหร่ก่อนทำการ payment
-async function getUserTotalBetPrice(userId, lottoDateId) {
-  const result = await User.aggregate([
-    {
-      $lookup: {
-        from: "bets",
-        localField: "_id",
-        foreignField: "user",
-        as: "bet",
-        pipeline: [
-          {
-            $match: { $expr: { $eq: ["$date", { $toObjectId: lottoDateId }] } },
-          },
-        ],
-      },
-    },
-    {
-      $match: { $expr: { $eq: ["$_id", { $toObjectId: userId }] } },
-    },
-    { $project: { total: { $sum: "$bet.price" } } },
-  ]);
-  return result[0].total;
-}
-//ใช้หาส่วนลดของลูกค้าแต่ละงวด
-async function getUserDisCount(userId, lotto) {
-  const result = await Discount.find({
-    user: userId,
-    date: { $lte: lotto.date },
-  })
-    .sort({ date: -1 })
-    .limit(1);
-  return result[0].discount || 0;
-}
+
