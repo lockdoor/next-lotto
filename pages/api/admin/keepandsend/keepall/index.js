@@ -4,10 +4,7 @@ import {
   deleteKeepAll,
 } from "../../../../../database/controller/keepandsend";
 import { getToken } from "next-auth/jwt";
-import {
-  responseError,
-  responseSuccess,
-} from "../../../../../lib/responseJson";
+import { responseError } from "../../../../../lib/responseJson";
 export default async function handler(req, res) {
   const token = await getToken({ req });
   if (token.role === "admin") {

@@ -78,6 +78,15 @@ body {
   @apply py-2 bg-blue-400 text-white border border-gray-50
 }
 
-/* .globals-table-td{
-  @apply
+/* .globals-table tbody tr {
+  @apply cursor-pointer hover:underline
 } */
+
+.globals-table tbody tr:nth-child(odd) {
+  @apply bg-blue-50 
+}
+
+.globals-table tbody tr:nth-child(even) {
+  @apply bg-blue-100
+}
+

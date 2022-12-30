@@ -18,7 +18,7 @@ export default function WinnerTable({ lottoCurrent }) {
     <div className="px-5">
       {data.win.map(({ _id, bet }) => {
         return (
-          <table key={_id} className="globals-table">
+          <table key={_id} className="globals-table max-w-sm">
             <caption className="text-center">{translateType(_id)}</caption>
             <thead>
               <tr>

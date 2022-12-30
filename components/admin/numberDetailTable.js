@@ -43,9 +43,7 @@ export default function NumberDetailTable({
         <tr
           key={index}
           onClick={() => onClickNumberHandler(bet)}
-          className={`${
-            index % 2 == 0 ? "bg-blue-50" : "bg-blue-100"
-          } cursor-pointer`}
+          className='cursor-pointer hover:underline'
         >
           <td className="text-center">
             {bet._id.numberString || bet.numberString}

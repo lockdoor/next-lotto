@@ -5,11 +5,9 @@ export default async function handler(req, res){
   const token = await getToken({req})
   if(token?.role === "admin"){
     switch(req.method){
-      
       case 'GET': 
         getLottoById(req, res)
         break
-      
       default:
         res.setHeader('Allow', ['GET'])
         // res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])

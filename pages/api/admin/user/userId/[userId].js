@@ -1,6 +1,6 @@
 import { getUserById } from "../../../../../database/controller/user";
 import { getToken } from "next-auth/jwt";
-import { responseError, responseSuccess } from "../../../../../lib/responseJson";
+import { responseError } from "../../../../../lib/responseJson";
 
 export default async function handler(req, res) {
   const token = await getToken({ req });
