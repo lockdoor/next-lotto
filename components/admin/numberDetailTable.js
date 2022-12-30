@@ -4,7 +4,7 @@ import { translateType, useOutsideAlerter } from '../../lib/helper';
 
 export default function NumberDetailTable({sortByKey, type, setShowSort, showSort, tableData, setTableData, onClickNumberHandler}) {
   
-  // console.log(tableData)
+  console.log(tableData)
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setShowSort);
 

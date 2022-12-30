@@ -19,6 +19,8 @@ export default function Conclusion({ lottoCurrent, userCurrent }) {
   const [showModalPost, setShowModalPost] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [selectFreeBet, setSelectFreeBet] = useState(null);
+
+
   const { isLoading, isError, data, error } = useQuery(
     ["getConclusion", lottoCurrent._id, userCurrent._id],
     getConclusion

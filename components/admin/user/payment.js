@@ -36,6 +36,7 @@ export default function Payment({userData, lottoDateId, setErrorMessage}) {
         setErrorMessage(response.data.message)
       }
       else{
+        setErrorMessage('')
         queryClient.prefetchQuery(
           ["getUsersWithTotalBetByLottoDateId", lottoDateId],
           getUsersWithTotalBetByLottoDateId)
@@ -57,6 +58,7 @@ export default function Payment({userData, lottoDateId, setErrorMessage}) {
 
   const onBlurHandler = () => {
     const payment = input.replace(/[\,]/g, "")
+    if (parseInt(payment) < 0 || parseInt(payment) === userData.payment?.payment) return
     if(userData.payment){
       const payload = {
         paymentId: userData.payment._id,
@@ -65,9 +67,11 @@ export default function Payment({userData, lottoDateId, setErrorMessage}) {
         lottoDateId: lottoDateId,
         userId: userData._id,
       }
+
       putMutation.mutate(payload)
     }
     else {
+      if(payment === '' || parseInt(payment) === 0) return
       const payload = {
         userId: userData._id,
         lottoDateId: lottoDateId,

@@ -129,11 +129,7 @@ export async function postPayment(req, res) {
       return;
     }
     const lotto = await Lotto.findById(lottoDateId);
-    const UserbetToTalPrice = await getUserTotalBetPrice(userId, lottoDateId);
-    console.log("UserbetToTalPrice is ", UserbetToTalPrice);
-    const discount = await getUserDisCount(userId, lotto);
-    console.log("discount is ", discount);
-    const debt = UserbetToTalPrice - (UserbetToTalPrice * discount) / 100;
+    const debt = await getDebt(lotto, userId)
     console.log("Debt is ", debt);
     const pay = new Payment({
       date: lottoDateId,
@@ -158,30 +154,38 @@ export async function postPayment(req, res) {
       pay.isFinish = false;
     }
     await pay.save();
-    res.status(200);
+    res.status(201).json(pay);
   } catch (error) {
     console.log("error by catch controller postPayment", error);
     responseError(res, 400, "error by catch controller postPayment");
   }
 }
 
+async function getDebt(lotto, userId){
+  const discount = await getUserDisCount(userId, lotto)
+  const bet = await Bet.find({date: lotto._id, user: userId})
+  const betNotFreePrice = bet.filter(e => !e.isFree).reduce((a, b) => a + b.price, 0)
+  const betFreePrice = bet.filter(e => e.isFree).reduce((a, b) => a + b.price, 0)
+  const discountPrice = (betNotFreePrice * discount /100)
+  const forbidden = await Forbidden.find({date: lotto._id})
+  const win = await Win.findOne({ date: lotto._id });
+  const winPrice = findWinPrice(win, bet, lotto, forbidden)
+  return betNotFreePrice - discountPrice - winPrice + betFreePrice
+}
+
 export async function putPayment(req, res) {
   console.log("putPayment work ", req.body);
   const { paymentId, userId, lottoDateId, recorder, payment } = req.body;
   try {
-    if (!paymentId || !userId || !lottoDateId || !recorder || !payment) {
+    if (!paymentId || !userId || !lottoDateId || !recorder ) {
       responseError(res, 400, "error by controller postPayment required data!");
       return;
     }
     const lotto = await Lotto.findById(lottoDateId);
-    const UserbetToTalPrice = await getUserTotalBetPrice(userId, lottoDateId);
-    // console.log('UserbetToTalPrice is ', UserbetToTalPrice)
-    const discount = await getUserDisCount(userId, lotto);
-    // console.log('discount is ', discount)
-    const debt = UserbetToTalPrice - (UserbetToTalPrice * discount) / 100;
-    // console.log ('Debt is ', debt)
+    const debt = await getDebt(lotto, userId)
+    console.log ('Debt is ', debt)
     const pay = await Payment.findById(paymentId);
-    if (payment > debt || payment <= 0) {
+    if (payment > debt) {
       console.log(
         "error by controller postPayment payment over debt or payment invalid"
       );
@@ -191,7 +195,13 @@ export async function putPayment(req, res) {
         "error by controller postPayment payment over debt or payment invalid"
       );
       return;
-    } else if (parseInt(payment) === debt) {
+    } else if (parseInt(payment) === 0 || payment === ''){
+      const result = await Payment.deleteOne({_id: paymentId})
+      res.status(201).json(result)
+      console.log(result)
+      return
+    }
+    else if (parseInt(payment) === debt) {
       pay.payment = parseInt(payment);
       pay.isFinish = true;
     } else {
@@ -236,7 +246,8 @@ export async function getUsersWithTotalBetByLottoDateId(req, res) {
                   price: 1,
                   numberString: 1,
                   recorder: 1,
-                  win: 1,
+                  // win: 1,
+                  isFree: 1
                 },
               },
             ],
@@ -302,14 +313,16 @@ export async function getUsersWithTotalBetByLottoDateId(req, res) {
       ]);
       // console.log(users[0])
       const win = await Win.findOne({ date: lottoDateId });
+      const forbidden = await Forbidden.find({ date: lottoDateId})
       const result = users.map((user) => ({
         _id: user._id,
         nickname: user.nickname,
         discount: user.discount,
         role: user.role,
         payment: user.payment,
-        total: user.total,
-        winPrice: findWinPrice(win, user.bet, lotto),
+        total: user.bet.filter(e => e.isFree === false).reduce((a, b) => a + b.price, 0),
+        freeBetPrice: user.bet.filter(e => e.isFree === true).reduce((a, b) => a + b.price, 0),
+        winPrice: findWinPrice(win, user.bet, lotto, forbidden),
       }));
 
       res.status(200).json(result);
@@ -496,8 +509,7 @@ export async function getConclusion(req, res) {
           },
         },
       ]);
-      const freeBet = discount 
-        ? await Bet.aggregate([
+      const freeBet = await Bet.aggregate([
           {
             $lookup: {
               from: 'users',
@@ -528,7 +540,7 @@ export async function getConclusion(req, res) {
             }
           }
         ])
-        : null
+      // console.log('betWin is ', betWin)
       const forbidden = await Forbidden.find({date: lottoDateId})
       // console.log(forbidden)
       const winPrice = (price, type, numberString) => {
@@ -584,7 +596,7 @@ export async function getConclusion(req, res) {
   }
 }
 
-function findWinPrice(win, bet, lotto) {
+function findWinPrice(win, bet, lotto, forbidden) {
   if(!win) return 0
   const up3 = win.first.slice(3);
   const set3up = up3
@@ -607,10 +619,26 @@ function findWinPrice(win, bet, lotto) {
       (e.type === "downrun" && downrun.some(n => n === e.numberString))
   );
   if(wins.length > 0){
-    const winWithPrice = wins.map(e => e.price * lotto[e.type])
-    // return winWithPrice
+    const calculateWithForbidden = (betWin) => {
+      const forbiddenNumber = forbidden.find(e => e.numberString === betWin.numberString)
+        if(forbiddenNumber?.type === 'A'){
+          return betWin.price * lotto[betWin.type] / 2
+        }
+        else if(forbiddenNumber?.type === 'B'){
+          return 0
+        }
+        else if(forbiddenNumber?.type === 'C'){
+          return forbiddenNumber?.isMain ? 0 : betWin.price * lotto[betWin.type] / 2
+        }
+        else {
+          return betWin.price * lotto[betWin.type]
+        }
+    }
+    const winWithPrice = wins.map(e => calculateWithForbidden(e))
+    // const winWithPrice = wins.map(e => e.price * lotto[e.type])
+
     return winWithPrice.reduce((a,b) => a + b, 0)
-    // return wins
+
   }else{
     return 0;
   }

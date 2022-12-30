@@ -68,7 +68,7 @@ export default function UsersTable({ lottoCurrent }) {
 }
 
 function Card({ data, lottoDateId }) {
-  const { nickname, discount, role, username, total, _id, payment, winPrice } = data;
+  const { nickname, discount, role, username, total, _id, payment, winPrice, freeBetPrice } = data;
   const [errorMessage, setErrorMessage] = useState('')
   const dispatch = useDispatch();
   const onClickEditHandler = () => {
@@ -100,7 +100,7 @@ function Card({ data, lottoDateId }) {
               {numberWithCommas(total * discount / 100)}
             </p>
           )}
-          <p>สรุปยอด: {total - (total * (discount || 0) / 100) - (winPrice || 0)}</p>
+          <p>สรุปยอด: {total - (total * (discount || 0) / 100) - (winPrice || 0) + freeBetPrice}</p>
           {(total - winPrice) > 0 && <div>
             <span className="">ยอดชำระ: </span>
             <Payment userData={data} lottoDateId={lottoDateId} setErrorMessage={setErrorMessage}/>
